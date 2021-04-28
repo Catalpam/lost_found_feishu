@@ -1,8 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"lost_found/common"
+	"lost_found/controller"
 )
 
 // for redis store and logrus
@@ -14,9 +14,7 @@ func main() {
 	db := common.InitDB()
 	defer db.Close()
 
-	//testSendMessage()
-	//testSendCardMessage()
-	//testDownloadFile()
 	//feishu.SendCardMessage()
-	fmt.Print("Success DB Init")
+	//fmt.Print("Success DB Init")
+	controller.UpdateStudentDatabase()
 }
