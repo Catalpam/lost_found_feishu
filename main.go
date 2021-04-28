@@ -1,7 +1,8 @@
 package main
 
 import (
-	feishu "lost_found/feishuApi/api"
+	"fmt"
+	"lost_found/common"
 )
 
 // for redis store and logrus
@@ -9,8 +10,13 @@ import (
 // var conf = configs.FeishuConfig("https://open.feishu.cn")
 
 func main() {
+
+	db := common.InitDB()
+	defer db.Close()
+
 	//testSendMessage()
 	//testSendCardMessage()
 	//testDownloadFile()
-	feishu.SendCardMessage()
+	//feishu.SendCardMessage()
+	fmt.Print("Success DB Init")
 }
