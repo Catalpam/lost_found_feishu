@@ -31,6 +31,7 @@ func InitDB() *gorm.DB{
 		panic("fail to connect database, err: " + err.Error())
 	}
 	db.AutoMigrate(&dbModel.Student{})
+	db.AutoMigrate(&dbModel.Thing{})
 	DB = db
 	return db
 }

@@ -9,4 +9,5 @@ require (
 	github.com/jinzhu/gorm v1.9.16
 	github.com/larksuite/oapi-sdk-go v1.1.32
 	github.com/sirupsen/logrus v1.7.0
+	github.com/thedevsaddam/gojsonq v2.3.0+incompatible
 )

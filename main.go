@@ -16,5 +16,6 @@ func main() {
 
 	//feishu.SendCardMessage()
 	//fmt.Print("Success DB Init")
-	controller.UpdateStudentDatabase()
+	//feishu.UpdateStudentList()
+	controller.ThingDbDefaultInit()
 }

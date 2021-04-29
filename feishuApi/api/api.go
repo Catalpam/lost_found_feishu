@@ -11,15 +11,15 @@ import (
 	"github.com/larksuite/oapi-sdk-go/core"
 	"github.com/larksuite/oapi-sdk-go/core/constants"
 	"github.com/larksuite/oapi-sdk-go/core/tools"
-	"github.com/larksuite/oapi-sdk-go/sample/configs"
 	"io/ioutil"
+	"lost_found/feishuApi/configs"
 	"os"
 )
 
 // for redis store and logrus
 // var conf = configs.ConfigWithLogrusAndRedisStore(constants.DomainFeiShu)
 // var conf = configs.FeishuConfig("https://open.feishu.cn")
-var conf = configs.TestConfig(constants.DomainFeiShu)
+var conf = configs.FeishuConfig(constants.DomainFeiShu)
 
 
 // send card message
