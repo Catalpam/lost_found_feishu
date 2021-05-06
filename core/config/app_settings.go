@@ -1,7 +1,7 @@
 package config
 
 import (
-	"github.com/larksuite/oapi-sdk-go/core/constants"
+	"lost_found/core/constants"
 	"os"
 )
 

@@ -1,7 +1,7 @@
 package response
 
 import (
-	"github.com/larksuite/oapi-sdk-go/core/tools"
+	"lost_found/core/tools"
 )
 
 const (

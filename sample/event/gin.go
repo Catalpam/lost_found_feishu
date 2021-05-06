@@ -3,13 +3,13 @@ package main
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/larksuite/oapi-sdk-go/core"
-	"github.com/larksuite/oapi-sdk-go/core/constants"
-	"github.com/larksuite/oapi-sdk-go/core/tools"
-	"github.com/larksuite/oapi-sdk-go/event"
-	eventhttp "github.com/larksuite/oapi-sdk-go/event/http"
-	"github.com/larksuite/oapi-sdk-go/sample/configs"
-	application "github.com/larksuite/oapi-sdk-go/service/application/v1"
+	"lost_found/core"
+	"lost_found/core/constants"
+	"lost_found/core/tools"
+	"lost_found/event"
+	eventhttp "lost_found/event/http"
+	"lost_found/sample/configs"
+	application "lost_found/service/application/v1"
 )
 
 // for redis store and logrus

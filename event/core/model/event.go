@@ -1,7 +1,7 @@
 package model
 
 import (
-	"github.com/larksuite/oapi-sdk-go/core/model"
+	"lost_found/core/model"
 )
 
 const Version1 = "1.0"

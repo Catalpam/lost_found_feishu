@@ -1,8 +1,8 @@
 package native
 
 import (
-	. "github.com/larksuite/oapi-sdk-go/card/http"
-	"github.com/larksuite/oapi-sdk-go/core/config"
+	. "lost_found/card/http"
+	"lost_found/core/config"
 	"net/http"
 )
 

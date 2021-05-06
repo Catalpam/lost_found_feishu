@@ -1,12 +1,12 @@
 package event
 
 import (
-	"github.com/larksuite/oapi-sdk-go/core"
-	"github.com/larksuite/oapi-sdk-go/core/config"
-	coremodel "github.com/larksuite/oapi-sdk-go/core/model"
-	app "github.com/larksuite/oapi-sdk-go/event/app/v1"
-	"github.com/larksuite/oapi-sdk-go/event/core/handlers"
-	"github.com/larksuite/oapi-sdk-go/event/core/model"
+	"lost_found/core"
+	"lost_found/core/config"
+	coremodel "lost_found/core/model"
+	app "lost_found/event/app/v1"
+	"lost_found/event/core/handlers"
+	"lost_found/event/core/model"
 	"sync"
 )
 

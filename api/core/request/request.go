@@ -3,8 +3,8 @@ package request
 import (
 	"context"
 	"fmt"
-	"github.com/larksuite/oapi-sdk-go/api/core/constants"
-	"github.com/larksuite/oapi-sdk-go/core"
+	"lost_found/api/core/constants"
+	"lost_found/core"
 	"io"
 	"net/http"
 	"net/url"

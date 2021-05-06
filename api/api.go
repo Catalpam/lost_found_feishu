@@ -1,11 +1,11 @@
 package api
 
 import (
-	"github.com/larksuite/oapi-sdk-go/api/core/handlers"
-	"github.com/larksuite/oapi-sdk-go/api/core/request"
-	"github.com/larksuite/oapi-sdk-go/api/core/response"
-	"github.com/larksuite/oapi-sdk-go/core"
-	"github.com/larksuite/oapi-sdk-go/core/config"
+	"lost_found/api/core/handlers"
+	"lost_found/api/core/request"
+	"lost_found/api/core/response"
+	"lost_found/core"
+	"lost_found/core/config"
 	"sync"
 )
 

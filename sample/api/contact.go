@@ -3,12 +3,12 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/larksuite/oapi-sdk-go/api/core/response"
-	"github.com/larksuite/oapi-sdk-go/core"
-	"github.com/larksuite/oapi-sdk-go/core/constants"
-	"github.com/larksuite/oapi-sdk-go/core/tools"
-	"github.com/larksuite/oapi-sdk-go/sample/configs"
-	contact "github.com/larksuite/oapi-sdk-go/service/contact/v3"
+	"lost_found/api/core/response"
+	"lost_found/core"
+	"lost_found/core/constants"
+	"lost_found/core/tools"
+	"lost_found/sample/configs"
+	contact "lost_found/service/contact/v3"
 )
 
 // for redis store and logrus

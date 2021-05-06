@@ -2,8 +2,8 @@ package core
 
 import (
 	"context"
-	"github.com/larksuite/oapi-sdk-go/core/constants"
-	"github.com/larksuite/oapi-sdk-go/core/model"
+	"lost_found/core/constants"
+	"lost_found/core/model"
 	"sync"
 	"time"
 )

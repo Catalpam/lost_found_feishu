@@ -2,13 +2,13 @@ package main
 
 import (
 	"fmt"
-	"github.com/larksuite/oapi-sdk-go/card"
-	cardhttpserver "github.com/larksuite/oapi-sdk-go/card/http/native"
-	"github.com/larksuite/oapi-sdk-go/card/model"
-	"github.com/larksuite/oapi-sdk-go/core"
-	"github.com/larksuite/oapi-sdk-go/core/constants"
-	"github.com/larksuite/oapi-sdk-go/core/tools"
-	"github.com/larksuite/oapi-sdk-go/sample/configs"
+	"lost_found/card"
+	cardhttpserver "lost_found/card/http/native"
+	"lost_found/card/model"
+	"lost_found/core"
+	"lost_found/core/constants"
+	"lost_found/core/tools"
+	"lost_found/sample/configs"
 	"net/http"
 )
 

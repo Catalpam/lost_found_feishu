@@ -2,10 +2,10 @@ package config
 
 import (
 	"context"
-	"github.com/larksuite/oapi-sdk-go/core"
-	"github.com/larksuite/oapi-sdk-go/core/constants"
-	"github.com/larksuite/oapi-sdk-go/core/log"
-	"github.com/larksuite/oapi-sdk-go/core/store"
+	"lost_found/core"
+	"lost_found/core/constants"
+	"lost_found/core/log"
+	"lost_found/core/store"
 )
 
 var ctxKeyConfig = "-----ctxKeyConfig"

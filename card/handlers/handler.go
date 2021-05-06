@@ -1,9 +1,9 @@
 package handlers
 
 import (
-	"github.com/larksuite/oapi-sdk-go/card/model"
-	"github.com/larksuite/oapi-sdk-go/core"
-	"github.com/larksuite/oapi-sdk-go/core/config"
+	"lost_found/card/model"
+	"lost_found/core"
+	"lost_found/core/config"
 )
 
 type Handler func(*core.Context, *model.Card) (interface{}, error)

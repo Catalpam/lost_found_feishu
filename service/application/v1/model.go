@@ -2,7 +2,7 @@
 package v1
 
 import (
-	"github.com/larksuite/oapi-sdk-go/event/core/model"
+	"lost_found/event/core/model"
 )
 
 type UserId struct {

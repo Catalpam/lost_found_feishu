@@ -2,12 +2,12 @@ package main
 
 import (
 	"fmt"
-	"github.com/larksuite/oapi-sdk-go/core"
-	"github.com/larksuite/oapi-sdk-go/core/constants"
-	"github.com/larksuite/oapi-sdk-go/core/tools"
-	eventhttpserver "github.com/larksuite/oapi-sdk-go/event/http/native"
-	"github.com/larksuite/oapi-sdk-go/sample/configs"
-	application "github.com/larksuite/oapi-sdk-go/service/application/v1"
+	"lost_found/core"
+	"lost_found/core/constants"
+	"lost_found/core/tools"
+	eventhttpserver "lost_found/event/http/native"
+	"lost_found/sample/configs"
+	application "lost_found/service/application/v1"
 	"net/http"
 )
 

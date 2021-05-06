@@ -6,6 +6,7 @@ Desktop.ini
 go.mod
 go.sum
 go_build_main_go
+go_build_lost_found_go
 /.idea
 
 # 排除所有.开头的隐藏文件:

@@ -3,12 +3,12 @@ package main
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/larksuite/oapi-sdk-go/core"
-	"github.com/larksuite/oapi-sdk-go/core/constants"
-	"github.com/larksuite/oapi-sdk-go/core/tools"
-	eventhttp "github.com/larksuite/oapi-sdk-go/event/http"
-	"github.com/larksuite/oapi-sdk-go/sample/configs"
-	contact "github.com/larksuite/oapi-sdk-go/service/contact/v3"
+	"lost_found/core"
+	"lost_found/core/constants"
+	"lost_found/core/tools"
+	eventhttp "lost_found/event/http"
+	"lost_found/sample/configs"
+	contact "lost_found/service/contact/v3"
 )
 
 func main() {

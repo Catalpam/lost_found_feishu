@@ -2,9 +2,9 @@
 package v3
 
 import (
-	"github.com/larksuite/oapi-sdk-go/core"
-	"github.com/larksuite/oapi-sdk-go/core/config"
-	"github.com/larksuite/oapi-sdk-go/event"
+	"lost_found/core"
+	"lost_found/core/config"
+	"lost_found/event"
 )
 
 type DepartmentCreatedEventHandler struct {

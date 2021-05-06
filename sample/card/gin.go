@@ -3,13 +3,13 @@ package main
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/larksuite/oapi-sdk-go/card"
-	cardtttp "github.com/larksuite/oapi-sdk-go/card/http"
-	"github.com/larksuite/oapi-sdk-go/card/model"
-	"github.com/larksuite/oapi-sdk-go/core"
-	"github.com/larksuite/oapi-sdk-go/core/constants"
-	"github.com/larksuite/oapi-sdk-go/core/tools"
-	"github.com/larksuite/oapi-sdk-go/sample/configs"
+	"lost_found/card"
+	cardtttp "lost_found/card/http"
+	"lost_found/card/model"
+	"lost_found/core"
+	"lost_found/core/constants"
+	"lost_found/core/tools"
+	"lost_found/sample/configs"
 )
 
 func main() {

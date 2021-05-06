@@ -1,8 +1,8 @@
 package model
 
 import (
-	"github.com/larksuite/oapi-sdk-go/core/constants"
-	"github.com/larksuite/oapi-sdk-go/core/model"
+	"lost_found/core/constants"
+	"lost_found/core/model"
 )
 
 const (

@@ -2,7 +2,7 @@
 package v3
 
 import (
-	"github.com/larksuite/oapi-sdk-go/api/core/tools"
+	"lost_found/api/core/tools"
 )
 
 type Bot struct {

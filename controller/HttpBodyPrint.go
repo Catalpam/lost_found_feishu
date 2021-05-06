@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 )
 
-func HandleGetAllData(c *gin.Context)  {
+func PrintAllData(c *gin.Context)  {
 	//log.Print("handle log")
 	body,_ := ioutil.ReadAll(c.Request.Body)
 	fmt.Println("---body/--- \r\n "+string(body))

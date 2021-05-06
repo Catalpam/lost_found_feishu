@@ -1,9 +1,9 @@
 package http
 
 import (
-	"github.com/larksuite/oapi-sdk-go/core/config"
-	coremodel "github.com/larksuite/oapi-sdk-go/core/model"
-	"github.com/larksuite/oapi-sdk-go/event"
+	"lost_found/core/config"
+	coremodel "lost_found/core/model"
+	"lost_found/event"
 	"net/http"
 )
 

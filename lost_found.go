@@ -1,9 +1,8 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
 	"lost_found/common"
-	"lost_found/routes"
+	"lost_found/handler"
 )
 
 // for redis store and logrus
@@ -11,16 +10,13 @@ import (
 // var conf = configs.FeishuConfig("https://open.feishu.cn")
 
 func main() {
-
 	db := common.InitDB()
 	defer db.Close()
-	//fmt.Print("Success DB Init")
-	//controller.UpdateStudentList()
-	//controller.ThingDbDefaultInit()
-	//controller.GetAccessToken()
-	r := gin.Default()
-	r = routes.CollectRoute(r)
-	print("hello")
-	panic(r.Run(":1111"))
 
+	handler.SendUser()
+	//r := gin.Default()
+	//r = routes.CollectRoute(r)
+	//print("hello")
+	//
+	//panic(r.Run(":1111"))
 }

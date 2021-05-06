@@ -1,12 +1,12 @@
 package v1
 
 import (
-	"github.com/larksuite/oapi-sdk-go/core"
-	"github.com/larksuite/oapi-sdk-go/core/config"
-	"github.com/larksuite/oapi-sdk-go/core/constants"
-	"github.com/larksuite/oapi-sdk-go/core/store"
-	"github.com/larksuite/oapi-sdk-go/event/core/handlers"
-	"github.com/larksuite/oapi-sdk-go/event/core/model"
+	"lost_found/core"
+	"lost_found/core/config"
+	"lost_found/core/constants"
+	"lost_found/core/store"
+	"lost_found/event/core/handlers"
+	"lost_found/event/core/model"
 	"time"
 )
 

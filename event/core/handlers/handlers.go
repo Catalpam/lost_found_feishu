@@ -4,13 +4,13 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/larksuite/oapi-sdk-go/core"
-	"github.com/larksuite/oapi-sdk-go/core/config"
-	"github.com/larksuite/oapi-sdk-go/core/constants"
-	"github.com/larksuite/oapi-sdk-go/core/errors"
-	coremodel "github.com/larksuite/oapi-sdk-go/core/model"
-	"github.com/larksuite/oapi-sdk-go/core/tools"
-	"github.com/larksuite/oapi-sdk-go/event/core/model"
+	"lost_found/core"
+	"lost_found/core/config"
+	"lost_found/core/constants"
+	"lost_found/core/errors"
+	coremodel "lost_found/core/model"
+	"lost_found/core/tools"
+	"lost_found/event/core/model"
 	"net/http"
 )
 
@@ -92,6 +92,8 @@ func handlerFunc(ctx *core.Context, httpEvent *model.HTTPEvent) {
 	conf := config.ByCtx(ctx)
 	var handler Handler
 	if type2EventHandler, ok := getType2EventHandler(conf); ok {
+		println(conf)
+		println(httpEvent.EventType)
 		h, ok := type2EventHandler[httpEvent.EventType]
 		if ok {
 			handler = h
@@ -99,6 +101,7 @@ func handlerFunc(ctx *core.Context, httpEvent *model.HTTPEvent) {
 	}
 	if handler == nil {
 		httpEvent.Err = newNotHandlerErr(httpEvent.EventType)
+		println("httpEvent.EventType error")
 		return
 	}
 	e := handler.GetEvent()

@@ -1,8 +1,8 @@
 package test
 
 import (
-	"github.com/larksuite/oapi-sdk-go/core/config"
-	"github.com/larksuite/oapi-sdk-go/core/constants"
+	"lost_found/core/config"
+	"lost_found/core/constants"
 	"os"
 	"strings"
 )

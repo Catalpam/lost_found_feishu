@@ -1,11 +1,11 @@
 package card
 
 import (
-	"github.com/larksuite/oapi-sdk-go/card/handlers"
-	"github.com/larksuite/oapi-sdk-go/card/model"
-	"github.com/larksuite/oapi-sdk-go/core"
-	"github.com/larksuite/oapi-sdk-go/core/config"
-	coremodel "github.com/larksuite/oapi-sdk-go/core/model"
+	"lost_found/card/handlers"
+	"lost_found/card/model"
+	"lost_found/core"
+	"lost_found/core/config"
+	coremodel "lost_found/core/model"
 )
 
 func SetHandler(conf *config.Config, handler handlers.Handler) {

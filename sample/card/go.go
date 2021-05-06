@@ -3,13 +3,13 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/larksuite/oapi-sdk-go/card"
-	"github.com/larksuite/oapi-sdk-go/card/model"
-	"github.com/larksuite/oapi-sdk-go/core"
-	"github.com/larksuite/oapi-sdk-go/core/constants"
-	coremodel "github.com/larksuite/oapi-sdk-go/core/model"
-	"github.com/larksuite/oapi-sdk-go/core/tools"
-	"github.com/larksuite/oapi-sdk-go/sample/configs"
+	"lost_found/card"
+	"lost_found/card/model"
+	"lost_found/core"
+	"lost_found/core/constants"
+	coremodel "lost_found/core/model"
+	"lost_found/core/tools"
+	"lost_found/sample/configs"
 )
 
 func main() {

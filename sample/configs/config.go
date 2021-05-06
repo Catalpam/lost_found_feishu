@@ -1,9 +1,9 @@
 package configs
 
 import (
-	"github.com/larksuite/oapi-sdk-go/core/config"
-	"github.com/larksuite/oapi-sdk-go/core/constants"
-	"github.com/larksuite/oapi-sdk-go/core/log"
+	"lost_found/core/config"
+	"lost_found/core/constants"
+	"lost_found/core/log"
 )
 
 // for Cutome APP（企业自建应用）

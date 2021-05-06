@@ -2,7 +2,7 @@
 package v1
 
 import (
-	"github.com/larksuite/oapi-sdk-go/api/core/tools"
+	"lost_found/api/core/tools"
 )
 
 type Mailgroup struct {

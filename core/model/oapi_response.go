@@ -2,7 +2,7 @@ package model
 
 import (
 	"fmt"
-	"github.com/larksuite/oapi-sdk-go/core/constants"
+	"lost_found/core/constants"
 	"net/http"
 )
 

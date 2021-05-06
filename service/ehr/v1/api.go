@@ -2,10 +2,10 @@
 package v1
 
 import (
-	"github.com/larksuite/oapi-sdk-go/api"
-	"github.com/larksuite/oapi-sdk-go/api/core/request"
-	"github.com/larksuite/oapi-sdk-go/core"
-	"github.com/larksuite/oapi-sdk-go/core/config"
+	"lost_found/api"
+	"lost_found/api/core/request"
+	"lost_found/core"
+	"lost_found/core/config"
 	"io"
 )
 
