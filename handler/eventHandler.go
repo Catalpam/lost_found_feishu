@@ -15,10 +15,12 @@ import (
 	"lost_found/core/constants"
 	"lost_found/core/tools"
 	"lost_found/event/core/model"
+	im "lost_found/service/im/v1"
 	"net/http"
 )
 
 var conf = configs.FeishuConfig(constants.DomainFeiShu)
+var imService = im.NewService(configs.FeishuConfig(constants.DomainFeiShu))
 
 func EventHandler(ctx *gin.Context)  {
 	body,_ := ioutil.ReadAll(ctx.Request.Body)
@@ -198,19 +200,13 @@ func sendImage(OpenId string, Key string) {
 
 func SendUser() {
 	coreCtx := core.WrapContext(context.Background())
-	body := map[string]interface{}{
-		"open_id":  "ou_273dbf68377bc685de3dd11c6102f879",
-		"msg_type": "share_user",
-		"content": map[string]interface{}{
-			"user_id": "ou_c5b13c8bae4e65657d1d89e6dbbfc098",
-			//"text":"111",
-		},
-	}
-	ret := make(map[string]interface{})
-	req := request.NewRequestWithNative("message/v4/send", "POST",
-		request.AccessTokenTypeTenant, body, &ret,
-	)
-	err := api.Send(coreCtx, conf, req)
+	reqCall := imService.Messages.Create(coreCtx, &im.MessageCreateReqBody{
+		ReceiveId: "ou_273dbf68377bc685de3dd11c6102f879",
+		Content:   "{\"user_id\":\"ou_273dbf68377bc685de3dd11c6102f879\"}",
+		MsgType:   "share_user",
+	})
+	reqCall.SetReceiveIdType("open_id")
+	message, err := reqCall.Do()
 	fmt.Println(coreCtx.GetRequestID())
 	fmt.Println(coreCtx.GetHTTPStatusCode())
 	if err != nil {
@@ -220,8 +216,5 @@ func SendUser() {
 		fmt.Println(e.Msg)
 		return
 	}
-	fmt.Println(tools.Prettify(ret))
+	fmt.Println(tools.Prettify(message))
 }
-
-
-

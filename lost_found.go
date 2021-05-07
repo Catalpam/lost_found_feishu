@@ -12,7 +12,6 @@ import (
 func main() {
 	db := common.InitDB()
 	defer db.Close()
-
 	handler.SendUser()
 	//r := gin.Default()
 	//r = routes.CollectRoute(r)
