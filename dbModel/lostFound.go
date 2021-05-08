@@ -12,7 +12,9 @@ type Found struct {
 	UpdatedAt time.Time
 
 	// 物品类型 为Thing表的NameID
-	TypeId string `gorm:"type:varchar(20);not null;"`
+	TypeName string `gorm:"type:varchar(20);not null;"`
+	// 物品大类型 为Thing表的NameID
+	ClassName string `gorm:"type:varchar(20);not null;"`
 	// 物品信息
 	ItemInfo string `gorm:"type:varchar(500);"`
 	// 图片 直接存序列化好的数组[]string类型，以varchar保存

@@ -32,6 +32,8 @@ func CollectRoute(r *gin.Engine) *gin.Engine {
 	miniRoutes := r.Group("/miniapp")
 	miniRoutes.POST("/userinfo", controller.GetUserInfo)
 	miniRoutes.POST("/gettypes", controller.GetTypes)
+	miniRoutes.POST("/addfound", controller.AddFound)
+
 
 
 	//后台管理Web登录
