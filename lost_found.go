@@ -41,6 +41,5 @@ func CollectRoute(r *gin.Engine) *gin.Engine {
 	webRoutes.POST("/userinfo", controller.GetUserInfo)
 	webRoutes.POST("/addfound", controller.AddFound)
 
-
 	return r
 }
