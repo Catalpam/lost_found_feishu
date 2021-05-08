@@ -13,13 +13,14 @@ func main() {
 	db := common.InitDB()
 	defer db.Close()
 	//更新数据库内容
-	common.ThingDbDefaultInit()
-	common.UpdateStudentList()
-
-	//加载根路由组
-	r := gin.Default()
-	r = CollectRoute(r)
-	r.Run(":1111")
+	//common.ThingDbDefaultInit()
+	//common.UpdateStudentList()
+	//
+	controller.GetTypes()
+	////加载根路由组
+	//r := gin.Default()
+	//r = CollectRoute(r)
+	//r.Run(":1111")
 }
 
 func CollectRoute(r *gin.Engine) *gin.Engine {

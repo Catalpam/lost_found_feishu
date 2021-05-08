@@ -32,6 +32,7 @@ func InitDB() *gorm.DB{
 	}
 	db.AutoMigrate(&dbModel.User{})
 	db.AutoMigrate(&dbModel.Type{})
+	db.AutoMigrate(&dbModel.ItemClass{})
 	db.AutoMigrate(&dbModel.Found{})
 	db.AutoMigrate(&dbModel.Lost{})
 
@@ -42,4 +43,3 @@ func InitDB() *gorm.DB{
 func GetDB() *gorm.DB {
 	return DB
 }
-

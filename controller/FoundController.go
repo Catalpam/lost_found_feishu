@@ -21,6 +21,8 @@ func AddFound(ctx *gin.Context)  {
 	additionalInfo,_ := ctx.GetPostForm("additional_info")
 
 	//检查有无空参数
+
+	//物品类型信息解析
 	if typeId == "" {
 		ctx.JSON(http.StatusOK, gin.H{
 			"code": 413,
@@ -29,6 +31,8 @@ func AddFound(ctx *gin.Context)  {
 		})
 		return
 	}
+
+
 	if itemInfo == "" {
 		ctx.JSON(http.StatusOK, gin.H{
 			"code": 413,
@@ -45,6 +49,8 @@ func AddFound(ctx *gin.Context)  {
 		})
 		return
 	}
+
+	//地点位置解析
 	if place == "" {
 		ctx.JSON(http.StatusOK, gin.H{
 			"code": 413,
@@ -61,14 +67,7 @@ func AddFound(ctx *gin.Context)  {
 		})
 		return
 	}
-	if losterInfo == "" {
-		ctx.JSON(http.StatusOK, gin.H{
-			"code": 413,
-			"data": "",
-			"msg": "缺少参数：loster_info",
-		})
-		return
-	}
+	//参数为0，1，2
 	if currentPlace == "" {
 		ctx.JSON(http.StatusOK, gin.H{
 			"code": 413,
@@ -77,15 +76,6 @@ func AddFound(ctx *gin.Context)  {
 		})
 		return
 	}
-	if additionalInfo == "" {
-		ctx.JSON(http.StatusOK, gin.H{
-			"code": 413,
-			"data": "",
-			"msg": "缺少参数：additional_info",
-		})
-		return
-	}
-
 
 	//查找类型ID对应的类型属性是否存在
 	var thing dbModel.Type
@@ -217,4 +207,25 @@ func GetFound(ctx *gin.Context) {
 		AdditionalInfo: additionalInfo,
 	}
 	DB.Create(&newFound)
+}
+
+func GetTypes()  {
+
+	db := common.GetDB()
+
+	var types []dbModel.Type
+	db.Where("class_id = ?","1").Find(&types)
+	print("---------------\n")
+
+	for _, value := range types {
+		print(value.Type)
+		print(value.TypeId)
+		print("\n")
+	}
+	print("---------------\n")
+	//ctx.JSON(http.StatusOK,gin.H{
+	//	"code": 200,
+	//	"data": "",
+	//	"msg": "物品类型Types返回成功",
+	//})
 }

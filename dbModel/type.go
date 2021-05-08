@@ -9,6 +9,18 @@ type Type struct {
 	Type   string `gorm:"type:varchar(200);not null"`
 	TypeId string `gorm:"type:varchar(200);nor null;unique"`
 	//物品大分类：类型
-	Class   string `gorm:"type:varchar(200);not null"`
 	ClassId string `gorm:"type:varchar(200);not null"`
 }
+
+type ItemClass struct {
+	gorm.Model
+	ClassName   string `gorm:"type:varchar(200);not null"`
+	ClassId string `gorm:"type:varchar(200);not null"`
+}
+
+//type ItemClass struct {
+//	Name string
+//	Types []string
+//}
+//
+//var ItemClasses []ItemClass
