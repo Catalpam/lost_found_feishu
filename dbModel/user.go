@@ -2,7 +2,7 @@ package dbModel
 
 import "github.com/jinzhu/gorm"
 
-type Student struct {
+type User struct {
 	gorm.Model
 	Name string `gorm:"type:varchar(20);not null"`
 	StudentId string `gorm:"type:varchar(40);not null;unique"`

@@ -126,7 +126,7 @@ func (f *File) MIMEHeader() textproto.MIMEHeader {
 	h.Set("Content-Disposition",
 		fmt.Sprintf(`form-data; name="%s"; filename="%s"`,
 			escapeQuotes(fieldName), escapeQuotes(name)))
-	h.Set("Content-Type", typ)
+	h.Set("Content-Class", typ)
 	return h
 }
 
