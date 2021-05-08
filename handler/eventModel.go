@@ -12,4 +12,3 @@ type Message struct {
 		OpenMessageId string `json:"open_message_id"`
 	} `json:"event"`
 }
-

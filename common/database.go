@@ -2,9 +2,9 @@ package common
 
 import (
 	"fmt"
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
 	"lost_found/dbModel"
-	_ "github.com/go-sql-driver/mysql"
 )
 
 var DB *gorm.DB
@@ -30,8 +30,11 @@ func InitDB() *gorm.DB{
 		fmt.Print("fail to connect database, err: " + err.Error())
 		panic("fail to connect database, err: " + err.Error())
 	}
-	db.AutoMigrate(&dbModel.Student{})
-	db.AutoMigrate(&dbModel.Thing{})
+	db.AutoMigrate(&dbModel.User{})
+	db.AutoMigrate(&dbModel.Type{})
+	db.AutoMigrate(&dbModel.Found{})
+	db.AutoMigrate(&dbModel.Lost{})
+
 	DB = db
 	return db
 }
