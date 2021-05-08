@@ -2,7 +2,6 @@ package main
 
 import (
 	"lost_found/common"
-	"lost_found/handler"
 )
 
 // for redis store and logrus
@@ -13,7 +12,6 @@ func main() {
 	db := common.InitDB()
 	defer db.Close()
 
-	handler.SendUser()
 	//r := gin.Default()
 	//r = routes.CollectRoute(r)
 	//print("hello")
