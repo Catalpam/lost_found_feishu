@@ -209,23 +209,39 @@ func GetFound(ctx *gin.Context) {
 	DB.Create(&newFound)
 }
 
-func GetTypes()  {
+func GetTypes(ctx *gin.Context)  {
 
 	db := common.GetDB()
-
+	var text = "[["
 	var types []dbModel.Type
-	db.Where("class_id = ?","1").Find(&types)
-	print("---------------\n")
-
-	for _, value := range types {
-		print(value.Type)
-		print(value.TypeId)
-		print("\n")
+	var classes []dbModel.ItemClass
+	db.Find(&classes)
+	println(classes[0].ClassName)
+	for _, itemClass := range classes{
+			text = text + itemClass.ClassName + ","
 	}
-	print("---------------\n")
-	//ctx.JSON(http.StatusOK,gin.H{
-	//	"code": 200,
-	//	"data": "",
-	//	"msg": "物品类型Types返回成功",
-	//})
+	text = text + "],"
+
+	text = text + "["
+	for _, itemClass := range classes{
+		text = text + "["
+		db.Where("class_id = ?",itemClass.ClassId).Find(&types)
+		for index, value := range types{
+			if index != 0 {
+				text =  text + "," + value.Type
+			} else {
+				text = text + value.Type
+			}
+		}
+		text = text + "],"
+	}
+	text = text + "]"
+
+	text = text + "]"
+	println(text)
+	ctx.JSON(http.StatusOK,gin.H{
+		"code": 200,
+		"data": text,
+		"msg": "物品类型Types返回成功",
+	})
 }

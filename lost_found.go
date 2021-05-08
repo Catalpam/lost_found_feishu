@@ -12,15 +12,15 @@ func main() {
 	//数据库加载初始化
 	db := common.InitDB()
 	defer db.Close()
+
 	//更新数据库内容
-	//common.ThingDbDefaultInit()
-	//common.UpdateStudentList()
-	//
-	controller.GetTypes()
-	////加载根路由组
-	//r := gin.Default()
-	//r = CollectRoute(r)
-	//r.Run(":1111")
+	common.ThingDbDefaultInit()
+	common.UpdateStudentList()
+
+	//加载根路由组
+	r := gin.Default()
+	r = CollectRoute(r)
+	r.Run(":1111")
 }
 
 func CollectRoute(r *gin.Engine) *gin.Engine {
@@ -29,8 +29,9 @@ func CollectRoute(r *gin.Engine) *gin.Engine {
 
 	//小程序路由组
 	//r.POST("/miniLogin", webController.SetLoginStatus)
-	miniRoutes := r.Group("/miniApp")
+	miniRoutes := r.Group("/miniapp")
 	miniRoutes.POST("/userinfo", controller.GetUserInfo)
+	miniRoutes.POST("/gettypes", controller.GetTypes)
 
 
 	//后台管理Web登录
