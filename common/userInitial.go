@@ -24,7 +24,6 @@ func UpdateStudentList() {
 		fmt.Printf(tools.Prettify(e))
 		return
 	}
-
 	for _, value := range result.Items {
 		var dbStudent dbModel.User
 		open_id := value.OpenId

@@ -18,9 +18,9 @@ type ItemClass struct {
 	ClassId string `gorm:"type:varchar(200);not null"`
 }
 
-//type ItemClass struct {
-//	Name string
-//	Types []string
-//}
-//
-//var ItemClasses []ItemClass
+type ItemType struct {
+	ID       uint `gorm:"primary_key"`
+	Name     string `gorm:"type:varchar(200);not null;unique"`
+	TypeId string `gorm:"type:varchar(10);not null;unique"`
+	Subtypes string `gorm:"type:varchar(300);not null"`
+}

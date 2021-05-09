@@ -9,24 +9,27 @@ type Found struct {
 	ID        uint `gorm:"primary_key"`
 	// 发现时间
 	CreatedAt time.Time
-	UpdatedAt time.Time
+	//UpdatedAt time.Time
 
-	// 物品类型 为Thing表的NameID
-	TypeName string `gorm:"type:varchar(20);not null;"`
-	// 物品大类型 为Thing表的NameID
-	ClassName string `gorm:"type:varchar(20);not null;"`
+	// 物品类型
+	ItemType string `gorm:"type:varchar(20);not null;"`
+	SubType string `gorm:"type:varchar(20);not null;"`
+
+	// 发现地点
+	Campus string `gorm:"type:varchar(20);not null"`
+	Place string `gorm:"type:varchar(20);not null"`
+	SubPlace string `gorm:"type:varchar(20);not null"`
+
 	// 物品信息
 	ItemInfo string `gorm:"type:varchar(500);"`
 	// 图片 直接存序列化好的数组[]string类型，以varchar保存
 	Image string `gorm:"type:varchar(200);"`
-	// 发现地点 为Location表的NameID
-	Place string `gorm:"type:varchar(20);not null"`
 	// 发现的详细地点
 	PlaceDetail string `gorm:"type:varchar(500);"`
-	// 失主身份信息(填姓名）
-	LosterInfo string `gorm:"type:varchar(500);"`
 	// 当前位置：0-留在原地 1-自己带走 2-教导失物招领处
 	CurrentPlace string `gorm:"type:char(1);not null"`
+	// 失主身份信息(填姓名）
+	LosterInfo string `gorm:"type:varchar(500);"`
 	// 补充信息
 	AdditionalInfo string `gorm:"type:varchar(500)"`
 }

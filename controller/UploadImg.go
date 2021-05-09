@@ -30,19 +30,28 @@ func UploadImg(c *gin.Context){
 		}
 
 		fileName:=kits.Md5(fmt.Sprintf("%s%s",f.Filename,time.Now().String()))
-		fildDir:=fmt.Sprintf("Image/%d%s/",time.Now().Year(),time.Now().Month().String())
+		fildDir:=fmt.Sprintf("images/")
 		isExist,_:=kits.IsFileExist(fildDir)
 		if !isExist{
 			os.Mkdir(fildDir,os.ModePerm)
 		}
+		url := "https://www.fengzigeng.com/api"
 		filepath:=fmt.Sprintf("%s%s%s",fildDir,fileName,fileExt)
+		urlpath:=url + "/image?" + "name=" + fmt.Sprintf("%s%s",fileName,fileExt)
+
 		c.SaveUploadedFile(f, filepath)
 		c.JSON(200, gin.H{
 			"code": 200,
-			"msg":  "上传成功!",
-			"result":gin.H{
-				"path":filepath,
+			"data":gin.H{
+				"path":urlpath,
 			},
+			"msg": "上传成功!",
 		})
 	}
+}
+
+func GetImage(c *gin.Context) {
+	imageName := c.Query("name")
+	imagePath := "./images/" + imageName
+	c.File(imagePath)
 }
