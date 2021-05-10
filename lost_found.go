@@ -1,13 +1,14 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
 	"lost_found/common"
 	"lost_found/controller"
 	"lost_found/controller/general"
 	"lost_found/controller/miniController"
 	"lost_found/controller/webController"
 	"lost_found/handler"
+
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
@@ -24,20 +25,17 @@ func main() {
 	r := gin.Default()
 	r = CollectRoute(r)
 	r.Run(":1111")
-
-
 }
 
 func CollectRoute(r *gin.Engine) *gin.Engine {
 	//通用
 	r.GET("/image", controller.GetImage)
 
-
 	//️处理飞书服务器传来的事件
 	r.POST("/webhook", handler.EventHandler)
 
 	//小程序路由组
-	//r.POST("/miniLogin", webController.SetLoginStatus)
+	r.POST("/minilogin", miniController.SetCookies)
 	miniRoutes := r.Group("/miniapp")
 	miniRoutes.POST("/userinfo", controller.GetUserInfo)
 	miniRoutes.POST("/gettypes", general.GetTypes)
@@ -46,8 +44,6 @@ func CollectRoute(r *gin.Engine) *gin.Engine {
 	miniRoutes.POST("/addfound", miniController.AddFound)
 	miniRoutes.POST("/getfound", miniController.GetFound)
 	miniRoutes.POST("/uploadimg", controller.UploadImg)
-
-
 
 	//后台管理Web登录
 	r.GET("/weblogin", webController.Login302)

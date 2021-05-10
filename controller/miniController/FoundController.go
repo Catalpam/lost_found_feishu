@@ -94,8 +94,8 @@ func AddFound(ctx *gin.Context)  {
 	index1 := ""
 	index2 := ""
 	str_arr := strings.Split(typeIndex, `,`)
-	str0 := strings.Split(str_arr[0], `{`)
-	str1 := strings.Split(str_arr[1], `}`)
+	str0 := strings.Split(str_arr[0], `[`)
+	str1 := strings.Split(str_arr[1], `]`)
 	for _, str := range str0 {
 		index1 = index1 + str
 	}
@@ -134,8 +134,8 @@ func AddFound(ctx *gin.Context)  {
 	index1 = ""
 	index2 = ""
 	str_arr2 := strings.Split(placeIndex, `,`)
-	str0 = strings.Split(str_arr2[0], `{`)
-	str1 = strings.Split(str_arr2[1], `}`)
+	str0 = strings.Split(str_arr2[0], `[`)
+	str1 = strings.Split(str_arr2[1], `]`)
 	for _, str := range str0 {
 		index1 = index1 + str
 	}
@@ -201,14 +201,21 @@ func GetFound(ctx *gin.Context) {
 	db.Find(&founds)
 	returnFounds(&founds,ctx)
 }
+
 func Get_Found(ctx *gin.Context) {
+	db := common.GetDB()
+	var founds []dbModel.Found
+
 	typeIndex,_ := ctx.GetPostForm("type_index")
 	//placeIndex,_ := ctx.GetPostForm("place_index")
 	//timeSession,_ := ctx.GetPostForm("time_session")
 
-
-	db := common.GetDB()
-	var founds []dbModel.Found
+	//获取物品大类
+	//获取物品小类
+	//获取校区
+	//获取丢失地点大类
+	//获取丢失地点小类
+	//获取时段
 
 	//没有输入TypeId时的返回
 	if typeIndex == "" {
@@ -240,10 +247,8 @@ func Get_Found(ctx *gin.Context) {
 		println(thing.Type)
 		db.Where("type_name = ?", thing.Type).Find(&founds)
 	}
-
 	returnFounds(&founds,ctx)
 }
-
 
 func returnFounds(founds *[]dbModel.Found, ctx *gin.Context)  {
 	if len(*founds) == 0{

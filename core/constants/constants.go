@@ -1,6 +1,6 @@
 package constants
 
-const ContentType = "Content-Class"
+const ContentType = "Content-Type"
 const ContentTypeJson = "application/json"
 const DefaultContentType = ContentTypeJson + "; charset=utf-8"
 

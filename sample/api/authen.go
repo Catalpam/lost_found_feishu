@@ -18,7 +18,7 @@ import (
 var authenService = authen.NewService(configs.TestConfig(constants.DomainFeiShu))
 
 func main() {
-	testAccessToken()
+	//testAccessToken()
 	//testFlushAccessToken()
 	//testUserInfo()
 }
