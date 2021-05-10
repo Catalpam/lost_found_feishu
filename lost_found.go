@@ -37,10 +37,13 @@ func CollectRoute(r *gin.Engine) *gin.Engine {
 	//️处理飞书服务器传来的事件
 	r.POST("/webhook", handler.EventHandler)
 
-	//小程序路由组
+	//小程序登录
 	r.POST("/minilogin", miniController.SetCookies)
+	//小程序路由组初始化
 	miniRoutes := r.Group("/miniapp")
+	//使用Auth中间件进行认证
 	miniRoutes.Use(miniMiddleWare.MiniAuthMiddleWare())
+	//小程序路由组
 	miniRoutes.POST("/userinfo", controller.GetUserInfo)
 	miniRoutes.POST("/gettypes", general.GetTypes)
 	miniRoutes.POST("/getcampus", general.GetCampus)
@@ -60,36 +63,3 @@ func CollectRoute(r *gin.Engine) *gin.Engine {
 
 	return r
 }
-
-//type Locations struct {
-//	ShaCampus struct {
-//		Building  []string `yaml:"教学楼,flow"`
-//		Sushe  []string `yaml:"宿舍区,flow"`
-//		ShiTang   []string `yaml:"食堂,flow"`
-//		Sports []string `yaml:"运动场所,flow"`
-//		Other   []string `yaml:"其他,flow"`
-//	} `yaml:"沙河校区"`
-//
-//	QinCampus struct {
-//		Building    []string `yaml:"教学楼,flow"`
-//		Liu	 []string `yaml:"留学生宿舍区,flow"`
-//		Shuo    []string `yaml:"硕丰苑,flow"`
-//		Xue    []string `yaml:"学知苑,flow"`
-//		Boshi    []string `yaml:"博翰苑,flow"`
-//		ShiTang     []string `yaml:"餐厅,flow"`
-//		Other     []string `yaml:"其他,flow"`
-//	} `yaml:"清水河校区"`
-//}
-
-//data, err := ioutil.ReadFile("./location_config.yaml")
-//if err != nil {
-//println(err)
-//println("读取文件失败")
-//}
-//
-//var bs =  Locations{}
-//if err := yaml.Unmarshal(data, &bs); err != nil {
-//println(err)
-//println("反序列化失败")
-//}
-//println(bs.QinCampus.Building)
