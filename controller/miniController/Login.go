@@ -22,7 +22,7 @@ func SetCookies(ctx *gin.Context) {
 	db := common.GetDB()
 	code, _ := ctx.GetPostForm("code")
 	//从飞书服务器请求用户信息
-	Session, OpenId := GetAccessToken(code)
+	SessionKey, OpenId := GetAccessToken(code)
 	//判断Code是否合法
 	if OpenId == ""{
 		ctx.SetCookie("miniAuth", "InlegalCode", 3600, "/", "fengzigeng.com", false, true)
@@ -36,6 +36,7 @@ func SetCookies(ctx *gin.Context) {
 	var loginingUser dbModel.User
 	db.Where("open_id=?",OpenId).First(&loginingUser)
 	if loginingUser.ID == 0 {
+		ctx.SetCookie("miniAuth", "InlegalOpenId", 3600, "/", "fengzigeng.com", false, true)
 		ctx.JSON(http.StatusOK, gin.H{
 			"code": 4002,
 			"data": "",
@@ -43,8 +44,16 @@ func SetCookies(ctx *gin.Context) {
 		})
 		return
 	}
+
 	//设置Cookie，返回信息
-	ctx.SetCookie("miniAuth", "InlegalOpenId", 3600, "/", "fengzigeng.com", false, true)
+	ctx.SetCookie("miniAuth", SessionKey, 3600, "/", "fengzigeng.com", false, true)
+	err := common.RedisClient.Set("feishu_user:"+SessionKey, OpenId, 0).Err()
+	if err != nil {
+		println("------------------用户信息写入Redis失败-------------------------")
+		fmt.Println(err)
+		panic(err)
+	}
+	println("Session写入成功！")
 	ctx.JSON(http.StatusOK, gin.H{
 		"code": 2000,
 		"data": gin.H{
@@ -53,7 +62,7 @@ func SetCookies(ctx *gin.Context) {
 		},
 		"msg":  "登陆成功!",
 	})
-	println("---------------------SessionKey:"+Session)
+	println("---------------------SessionKey:"+ SessionKey)
 	println("---------------------Open_Id:"+OpenId)
 }
 

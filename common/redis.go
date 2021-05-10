@@ -16,9 +16,9 @@ func RedisInit() {
 
 	pong, err := RedisClient.Ping().Result()
 	if err != nil {
-		fmt.Println("reis 连接失败：", pong, err)
+		fmt.Println("Redis 连接失败：", pong, err)
 		panic("redis ping error")
 		return
 	}
-	fmt.Println("reis 连接成功：", pong)
+	fmt.Println("Redis 连接成功：", pong)
 }

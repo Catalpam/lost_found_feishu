@@ -7,6 +7,7 @@ import (
 	"lost_found/controller/miniController"
 	"lost_found/controller/webController"
 	"lost_found/handler"
+	"lost_found/miniMiddleWare"
 
 	"github.com/gin-gonic/gin"
 )
@@ -39,6 +40,7 @@ func CollectRoute(r *gin.Engine) *gin.Engine {
 	//小程序路由组
 	r.POST("/minilogin", miniController.SetCookies)
 	miniRoutes := r.Group("/miniapp")
+	miniRoutes.Use(miniMiddleWare.MiniAuthMiddleWare())
 	miniRoutes.POST("/userinfo", controller.GetUserInfo)
 	miniRoutes.POST("/gettypes", general.GetTypes)
 	miniRoutes.POST("/getcampus", general.GetCampus)
