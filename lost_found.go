@@ -12,6 +12,8 @@ import (
 )
 
 func main() {
+	//Redis缓存加载初始化
+	common.RedisInit()
 	//数据库加载初始化
 	db := common.InitDB()
 	defer db.Close()
