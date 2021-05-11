@@ -6,22 +6,22 @@ import (
 
 type Found struct {
 	//gorm Model
-	ID        uint `gorm:"primary_key"`
+	ID uint `gorm:"primary_key"`
 	// 发现时间
 	CreatedAt time.Time
 	//发现日期&时间&时间段
-	FoundDate string `gorm:"type:varchar(20);not null;"`
-	FoundTime string `gorm:"type:varchar(20);not null;"`
-	FoundTimeSession string `gorm:"type:varchar(20);not null""`
+	FoundDate        string `gorm:"type:varchar(20);not null;"`
+	FoundTime        string `gorm:"type:varchar(20);not null;"`
+	FoundTimeSession string `gorm:"type:varchar(20);not null"`
 	//Founder信息
-	FoundOpenId string `gorm:"type:varchar(20);not null;"`
+	FoundOpenId string `gorm:"type:varchar(50);not null;"`
 	// 物品类型
 	ItemType string `gorm:"type:varchar(20);not null;"`
-	SubType string `gorm:"type:varchar(20);not null;"`
+	SubType  string `gorm:"type:varchar(20);not null;"`
 
 	// 发现地点
-	Campus string `gorm:"type:varchar(20);not null"`
-	Place string `gorm:"type:varchar(20);not null"`
+	Campus   string `gorm:"type:varchar(20);not null"`
+	Place    string `gorm:"type:varchar(20);not null"`
 	SubPlace string `gorm:"type:varchar(20);not null"`
 
 	// 物品信息

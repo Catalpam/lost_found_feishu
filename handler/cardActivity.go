@@ -18,8 +18,8 @@ func CardEvent() gin.HandlerFunc {
 	var conf = configs.FeishuConfig(constants.DomainFeiShu)
 
 	card.SetHandler(conf, func(coreCtx *core.Context, card *model.Card) (interface{}, error) {
-		fmt.Println(coreCtx.GetRequestID())
 		fmt.Println(tools.Prettify(card.Action))
+
 		cardMessage.SendMessage(card.OpenID, "按钮点击成功！")
 		return nil, nil
 	})

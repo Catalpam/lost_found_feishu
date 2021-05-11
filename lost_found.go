@@ -15,11 +15,39 @@ import (
 func main() {
 
 	cardMessage.SendCardMessage(
-		"ou_c5b13c8bae4e65657d1d89e6dbbfc098",
+		"ou_273dbf68377bc685de3dd11c6102f879",
 		cardMessage.FoundClaimCard(cardMessage.FoundClaim{
-			ItemSubtype:  "string",
+			ItemSubtype:  "一个月后拿到的MBP",
+			LeaveMessage: "来自失主的感谢",
 			ImageKey:     "img_2e320ed6-8a53-405a-b075-edec757ff25g",
-			LeaveMessage: "留下的消息",
+		}),
+	)
+
+	cardMessage.SendCardMessage(
+		"ou_273dbf68377bc685de3dd11c6102f879",
+		cardMessage.ThanksHasSendCard(cardMessage.ThanksHasSend{
+			ItemSubtype: "一个月后拿到的MBP",
+			FoundDate:   "2021-5-11",
+			ImageKey:    "img_2e320ed6-8a53-405a-b075-edec757ff25g",
+		}),
+	)
+
+	cardMessage.SendCardMessage(
+		"ou_273dbf68377bc685de3dd11c6102f879",
+		cardMessage.SendUser2FounderCard(cardMessage.SendUser2Founder{
+			ItemSubtype: "一个月后拿到的MBP",
+			FoundDate:   "2021-5-11",
+			ImageKey:    "img_2e320ed6-8a53-405a-b075-edec757ff25g",
+		}),
+	)
+
+	cardMessage.SendCardMessage(
+		"ou_273dbf68377bc685de3dd11c6102f879",
+		cardMessage.SendUser2LosterCard(cardMessage.SendUser2Loster{
+			FounderName: "鬼才冯梓耕",
+			ItemSubtype: "一个月后拿到的MBP",
+			FoundDate:   "2021-5-11",
+			ImageKey:    "img_2e320ed6-8a53-405a-b075-edec757ff25g",
 		}),
 	)
 
