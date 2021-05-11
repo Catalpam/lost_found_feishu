@@ -41,6 +41,5 @@ func MiniAuthMiddleWare() gin.HandlerFunc {
 		fmt.Println("读取成功,用户的Open_Id值为：", openId)
 		println("SessionKey读取成功！")
 		println("----------open_id成功写入至上下文中--------------")
-		//ctx.Next()
 	}
 }

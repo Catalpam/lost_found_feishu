@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"lost_found/cardMessage"
 	"lost_found/common"
 	"lost_found/controller"
 	"lost_found/controller/general"
@@ -12,12 +13,21 @@ import (
 )
 
 func main() {
+
+	cardMessage.SendCardMessage(
+		"ou_c5b13c8bae4e65657d1d89e6dbbfc098",
+		cardMessage.FoundClaimCard(cardMessage.FoundClaim{
+			ItemSubtype:  "string",
+			ImageKey:     "img_2e320ed6-8a53-405a-b075-edec757ff25g",
+			LeaveMessage: "留下的消息",
+		}),
+	)
+
 	//Redis缓存加载初始化
 	common.RedisInit()
 	//数据库加载初始化
 	db := common.InitDB()
 	defer db.Close()
-
 	//更新数据库内容
 	common.ItemTypeInitial()
 	common.UpdateStudentList()
@@ -35,6 +45,7 @@ func CollectRoute(r *gin.Engine) *gin.Engine {
 
 	//️处理飞书服务器传来的事件
 	r.POST("/webhook", handler.EventHandler)
+	r.POST("/card", handler.CardEvent())
 
 	//小程序登录
 	r.POST("/minilogin", miniController.SetCookies)
