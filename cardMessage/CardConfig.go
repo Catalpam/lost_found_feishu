@@ -8,8 +8,8 @@ type FeedbackUrlModel struct {
 }
 
 var FeedbackUrl = FeedbackUrlModel{
-	HasClaim2Founder: "https://wenjuan.feishu.cn/m?t=szwWLUIernsi-a1rz",
-	HasSendThanks:    "https://wenjuan.feishu.cn/m?t=szwWLUIernsi-a1rz",
+	HasClaim2Founder: "https://wenjuan.feishu.cn/m?t=s4Ihv8ra93ri-euhz",
+	HasSendThanks:    "https://wenjuan.feishu.cn/m?t=s4Ihv8ra93ri-euhz",
 }
 
 func Str2MultiUrl(url string) string {

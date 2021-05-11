@@ -16,40 +16,51 @@ func main() {
 
 	cardMessage.SendCardMessage(
 		"ou_273dbf68377bc685de3dd11c6102f879",
-		cardMessage.FoundClaimCard(cardMessage.FoundClaim{
-			ItemSubtype:  "一个月后拿到的MBP",
-			LeaveMessage: "来自失主的感谢",
-			ImageKey:     "img_2e320ed6-8a53-405a-b075-edec757ff25g",
-		}),
-	)
-
-	cardMessage.SendCardMessage(
-		"ou_273dbf68377bc685de3dd11c6102f879",
-		cardMessage.ThanksHasSendCard(cardMessage.ThanksHasSend{
+		cardMessage.ReSurveyCard(cardMessage.ReSurvey{
+			LostId:      "0",
 			ItemSubtype: "一个月后拿到的MBP",
-			FoundDate:   "2021-5-11",
+			FoundDate:   "2222-10-1",
 			ImageKey:    "img_2e320ed6-8a53-405a-b075-edec757ff25g",
 		}),
 	)
 
-	cardMessage.SendCardMessage(
-		"ou_273dbf68377bc685de3dd11c6102f879",
-		cardMessage.SendUser2FounderCard(cardMessage.SendUser2Founder{
-			ItemSubtype: "一个月后拿到的MBP",
-			FoundDate:   "2021-5-11",
-			ImageKey:    "img_2e320ed6-8a53-405a-b075-edec757ff25g",
-		}),
-	)
 
-	cardMessage.SendCardMessage(
-		"ou_273dbf68377bc685de3dd11c6102f879",
-		cardMessage.SendUser2LosterCard(cardMessage.SendUser2Loster{
-			FounderName: "鬼才冯梓耕",
-			ItemSubtype: "一个月后拿到的MBP",
-			FoundDate:   "2021-5-11",
-			ImageKey:    "img_2e320ed6-8a53-405a-b075-edec757ff25g",
-		}),
-	)
+	//cardMessage.SendCardMessage(
+	//	"ou_273dbf68377bc685de3dd11c6102f879",
+	//	cardMessage.FoundClaimCard(cardMessage.FoundClaim{
+	//		ItemSubtype:  "一个月后拿到的MBP",
+	//		LeaveMessage: "来自失主的感谢",
+	//		ImageKey:     "img_2e320ed6-8a53-405a-b075-edec757ff25g",
+	//	}),
+	//)
+	//
+	//cardMessage.SendCardMessage(
+	//	"ou_273dbf68377bc685de3dd11c6102f879",
+	//	cardMessage.ThanksHasSendCard(cardMessage.ThanksHasSend{
+	//		ItemSubtype: "一个月后拿到的MBP",
+	//		FoundDate:   "2021-5-11",
+	//		ImageKey:    "img_2e320ed6-8a53-405a-b075-edec757ff25g",
+	//	}),
+	//)
+	//
+	//cardMessage.SendCardMessage(
+	//	"ou_273dbf68377bc685de3dd11c6102f879",
+	//	cardMessage.SendUser2FounderCard(cardMessage.SendUser2Founder{
+	//		ItemSubtype: "一个月后拿到的MBP",
+	//		FoundDate:   "2021-5-11",
+	//		ImageKey:    "img_2e320ed6-8a53-405a-b075-edec757ff25g",
+	//	}),
+	//)
+	//
+	//cardMessage.SendCardMessage(
+	//	"ou_273dbf68377bc685de3dd11c6102f879",
+	//	cardMessage.SendUser2LosterCard(cardMessage.SendUser2Loster{
+	//		FounderName: "鬼才冯梓耕",
+	//		ItemSubtype: "一个月后拿到的MBP",
+	//		FoundDate:   "2021-5-11",
+	//		ImageKey:    "img_2e320ed6-8a53-405a-b075-edec757ff25g",
+	//	}),
+	//)
 
 	//Redis缓存加载初始化
 	common.RedisInit()
@@ -64,7 +75,7 @@ func main() {
 	//加载根路由组
 	r := gin.Default()
 	r = CollectRoute(r)
-	r.Run(":1111")
+	panic(r.Run(":1111"))
 }
 
 func CollectRoute(r *gin.Engine) *gin.Engine {

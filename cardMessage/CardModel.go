@@ -60,3 +60,47 @@ type SendUser2Loster struct {
 	FoundDate   string
 	ImageKey    string
 }
+
+func RevokeLostCard() string {
+	var cardContent = "{\"a\":\"a\"}"
+	formatRawCard := "{\n\t\"config\": {\n\t\t\"wide_screen_mode\": true\n\t},\n\t\"elements\": [{\n\t\t\t\"tag\": \"div\",\n\t\t\t\"text\": {\n\t\t\t\t\"tag\": \"lark_md\",\n\t\t\t\t\"content\": \"很抱歉未能帮您解决问题，若您对本次使用体验感到不满，可以点击反馈按钮进行吐槽\"\n\t\t\t}\n\t\t},\n\t\t{\n\t\t\t\"tag\": \"action\",\n\t\t\t\"actions\": [{\n\t\t\t\t\"tag\": \"button\",\n\t\t\t\t\"text\": {\n\t\t\t\t\t\"tag\": \"plain_text\",\n\t\t\t\t\t\"content\": \"提交反馈\"\n\t\t\t\t},\n\t\t\t\t%s\n\t\t\t\t\"type\": \"primary\"\n\t\t\t}]\n\t\t}\n\t]\n}"
+	println(formatRawCard)
+	cardContent = fmt.Sprintf(formatRawCard, Str2MultiUrl(FeedbackUrl.HasSendThanks))
+	println(cardContent)
+	return cardContent
+}
+
+func ReSurveyCard(cardmodel ReSurvey) string {
+	var cardContent = ""
+	formatRawCard := rawSurveyCard
+	println(formatRawCard)
+	cardContent = fmt.Sprintf(formatRawCard, cardmodel.ItemSubtype,cardmodel.FoundDate, cardmodel.ImageKey,ReSurveyButton(cardmodel.LostId))
+	println(cardContent)
+	return cardContent
+}
+type ReSurvey struct {
+	LostId 		string
+	ItemSubtype string
+	FoundDate   string
+	ImageKey    string
+}
+
+func SuspectedCard(cardmodel Suspected) string {
+	var cardContent = ""
+	formatRawCard := rawSurveyCard
+	println(formatRawCard)
+	cardContent = fmt.Sprintf(formatRawCard, cardmodel.ItemSubtype,cardmodel.FoundDate, cardmodel.ImageKey,ReSurveyButton(cardmodel.LostId))
+	println(cardContent)
+	return cardContent
+}
+type Suspected struct {
+	LostId 		string
+	FoundId 	string
+	ItemSubtype string
+	FoundDate   string
+	ImageKey    string
+}
+
+
+
+

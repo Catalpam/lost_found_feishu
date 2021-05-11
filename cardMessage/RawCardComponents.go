@@ -1,11 +1,17 @@
 package cardMessage
 
+import "fmt"
+
 func ReSurveyButton(lostId string) string {
-	return ""
+	return fmt.Sprintf(ReSurveyButtonRaw,lostId,lostId,lostId)
+}
+func ReSuspectedButton(lostId string,foundId string) string {
+	return fmt.Sprintf(ReSuspectedButtonRaw,lostId,foundId,lostId,foundId)
 }
 
-const ReSurveyButtonRaw =
-`
+
+//ReSurvey卡片按钮
+const ReSurveyButtonRaw = `
 {
   "tag": "action",
   "layout": "bisected",
@@ -63,3 +69,47 @@ const ReSurveyButtonRaw =
   ]
 }
 `
+
+//Suspected卡片按钮
+const ReSuspectedButtonRaw = `
+{
+  "tag": "action",
+  "layout": "bisected",
+  "actions": [
+	{
+	  "tag": "button",
+	  "text": {
+		"tag": "plain_text",
+		"content": "是"
+	  },
+	  "value": {
+		"buttonType": "survey",
+		"buttonValue": {
+		  "LostId": "%s",
+		  "FoundId": "%s",
+		  "IsTrue": "T"
+		}
+	  },
+	  "type": "primary"
+	},
+	{
+	  "tag": "button",
+	  "text": {
+		"tag": "plain_text",
+		"content": "否"
+      },
+	  "value": {
+		"buttonType": "survey",
+		"buttonValue": {
+		  "LostId": "%s",
+		  "FoundId": "%s",
+		  "IsTrue": "F"
+		}
+	  },
+	  "type": "primary"
+	}
+  ]
+}
+`
+
+
