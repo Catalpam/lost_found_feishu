@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func AddFound(ctx *gin.Context)  {
@@ -22,8 +23,8 @@ func AddFound(ctx *gin.Context)  {
 	placeDetail,_ := ctx.GetPostForm("place_detail")
 	losterInfo, _ := ctx.GetPostForm("loster_info")
 	currentPlace,_ := ctx.GetPostForm("current_place")
+	currentPlaceDetail,_ := ctx.GetPostForm("current_place_detail")
 	additionalInfo,_ := ctx.GetPostForm("additional_info")
-
 
 	//检查有无空参数
 	{
@@ -35,7 +36,6 @@ func AddFound(ctx *gin.Context)  {
 			})
 			return
 		}
-
 		if itemInfo == "" {
 			ctx.JSON(http.StatusOK, gin.H{
 				"code": 413,
@@ -87,6 +87,23 @@ func AddFound(ctx *gin.Context)  {
 				"msg":  "缺少参数：current_place",
 			})
 			return
+		}
+		if currentPlace == "2" {
+			if currentPlaceDetail == "" {
+				ctx.JSON(http.StatusOK, gin.H{
+					"code": 413,
+					"data": "",
+					"msg":  "缺少参数：current_place_detail",
+				})
+				return
+			}
+		} else if (currentPlace != "0") && (currentPlace != "1") {
+				ctx.JSON(http.StatusOK, gin.H{
+					"code": 413,
+					"data": "",
+					"msg":  "current_place不合法",
+				})
+				return
 		}
 	}
 
@@ -172,21 +189,28 @@ func AddFound(ctx *gin.Context)  {
 	var campus dbModel.Campus
 	db.Where("campus_id=?",campus_id).First(&campus)
 
-
+	//获取用户OpenId
+	OpenId := ctx.MustGet("open_id").(string)
 	//将新的Found对象添加至数据库中
 	newFound := dbModel.Found{
-		ItemType:       itemType.Name,
-		SubType:        SubTypeName,
-		Campus:         campus.Name,
-		Place:          place.Name,
-		SubPlace:       subPlace,
-		ItemInfo:       itemInfo,
-		Image:          image,
-		PlaceDetail:    placeDetail,
-		CurrentPlace:   currentPlace,
-		LosterInfo:     losterInfo,
-		AdditionalInfo: additionalInfo,
+		ID:                 0,
+		FoundDate:          time.Now().Format("2006-01-02"),
+		FoundTime:          time.Now().Format("15:04"),
+		FoundOpenId:        OpenId,
+		ItemType:           itemType.Name,
+		SubType:            SubTypeName,
+		Campus:             campus.Name,
+		Place:              place.Name,
+		SubPlace:           subPlace,
+		ItemInfo:           itemInfo,
+		Image:              image,
+		PlaceDetail:        placeDetail,
+		CurrentPlace:       currentPlace,
+		CurrentPlaceDetail: currentPlaceDetail,
+		LosterInfo:         losterInfo,
+		AdditionalInfo:     additionalInfo,
 	}
+
 	db.Create(&newFound)
 	ctx.JSON(http.StatusOK, gin.H{
 		"code": 200,

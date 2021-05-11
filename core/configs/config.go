@@ -6,7 +6,6 @@ import (
 	"lost_found/core/log"
 )
 
-// for Cutome APP（企业自建应用）
 var appSettings = config.GetInternalAppSettingsByEnv()
 
 func FeishuConfig(domain constants.Domain) *config.Config {

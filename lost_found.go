@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/gin-gonic/gin"
 	"lost_found/common"
 	"lost_found/controller"
 	"lost_found/controller/general"
@@ -8,8 +9,6 @@ import (
 	"lost_found/controller/webController"
 	"lost_found/handler"
 	"lost_found/miniMiddleWare"
-
-	"github.com/gin-gonic/gin"
 )
 
 func main() {
