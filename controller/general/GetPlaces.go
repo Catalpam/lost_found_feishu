@@ -20,7 +20,7 @@ func GetPlaces(ctx *gin.Context)  {
 	var text = "[["
 	var place []dbModel.Place
 	db.Where("campus_id = ?",campusId).Order("place_id ASC").Find(&place)
-	println(place[0].Name)
+	println(place[0])
 	for _, itemClass := range place{
 		text = text + itemClass.Name + ","
 	}
@@ -56,4 +56,3 @@ func GetCampus(ctx *gin.Context)  {
 		"msg": "Campus返回成功",
 	})
 }
-

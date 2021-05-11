@@ -9,8 +9,12 @@ type Found struct {
 	ID        uint `gorm:"primary_key"`
 	// 发现时间
 	CreatedAt time.Time
-	//UpdatedAt time.Time
-
+	//发现日期&时间&时间段
+	FoundDate string `gorm:"type:varchar(20);not null;"`
+	FoundTime string `gorm:"type:varchar(20);not null;"`
+	FoundTimeSession string `gorm:"type:varchar(20);not null""`
+	//Founder信息
+	FoundOpenId string `gorm:"type:varchar(20);not null;"`
 	// 物品类型
 	ItemType string `gorm:"type:varchar(20);not null;"`
 	SubType string `gorm:"type:varchar(20);not null;"`
@@ -28,6 +32,8 @@ type Found struct {
 	PlaceDetail string `gorm:"type:varchar(500);"`
 	// 当前位置：0-留在原地 1-自己带走 2-教导失物招领处
 	CurrentPlace string `gorm:"type:char(1);not null"`
+	// 当前位置：0-留在原地 1-自己带走 2-教导失物招领处
+	CurrentPlaceDetail string `gorm:"type:char(200);"`
 	// 失主身份信息(填姓名）
 	LosterInfo string `gorm:"type:varchar(500);"`
 	// 补充信息

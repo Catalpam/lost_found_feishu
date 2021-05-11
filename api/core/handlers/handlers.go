@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
+	"io/ioutil"
 	"lost_found/api/core/constants"
 	"lost_found/api/core/errors"
 	"lost_found/api/core/request"
@@ -14,8 +16,6 @@ import (
 	"lost_found/core/config"
 	coreconst "lost_found/core/constants"
 	"lost_found/core/model"
-	"io"
-	"io/ioutil"
 	"mime/multipart"
 	"net/http"
 	"os"
@@ -30,7 +30,7 @@ var defaultHTTPRequestHeaderKeysWithContext = []string{coreconst.HTTPHeaderKeyRe
 var Default = &Handlers{}
 
 func init() {
-	defaultHTTPRequestHeader["User-Agent"] = fmt.Sprintf("oapi-sdk-go/%s", core.SdkVersion)
+	defaultHTTPRequestHeader["User-Agent"] = fmt.Sprintf("feishu-lost-found/%s", core.SdkVersion)
 	Default.init = initFunc
 	Default.validate = validateFunc
 	Default.build = buildFunc

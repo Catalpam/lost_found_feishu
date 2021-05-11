@@ -6,11 +6,11 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
+	"lost_found/cardMessage"
 	"lost_found/core/configs"
 	"lost_found/core/constants"
 	"lost_found/core/tools"
 	"lost_found/event/core/model"
-	"lost_found/imRobot"
 	im "lost_found/service/im/v1"
 	"net/http"
 )
@@ -106,14 +106,14 @@ func messageWebhook (body []byte) error{
 		return err
 	}
 	if content.Event.MsgType == "image" {
-		imRobot.SendMessage(content.Event.OpenId, "坏耶，图片有些小问题:" + content.Event.Text)
-		imRobot.SendImage(content.Event.OpenId, content.Event.ImageKey)
+		cardMessage.SendMessage(content.Event.OpenId, "坏耶，图片有些小问题:" + content.Event.Text)
+		cardMessage.SendImage(content.Event.OpenId, content.Event.ImageKey)
 	}
 	if content.Event.MsgType == "text" {
-		imRobot.SendMessage(content.Event.OpenId, "好耶，Your Msg is:" + content.Event.Text)
+		cardMessage.SendMessage(content.Event.OpenId, "好耶，Your Msg is:" + content.Event.Text)
 	}
 	if content.Event.MsgType == "audio" {
-		imRobot.SendMessage(content.Event.OpenId, "阿哦，相信机器人，大家是不会听语音的")
+		cardMessage.SendMessage(content.Event.OpenId, "阿哦，相信机器人，大家是不会听语音的")
 	}
 	return nil
 }
