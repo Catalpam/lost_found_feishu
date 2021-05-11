@@ -27,6 +27,8 @@ type Found struct {
 	ItemInfo string `gorm:"type:varchar(500);"`
 	// 图片 直接存序列化好的数组[]string类型，以varchar保存
 	Image string `gorm:"type:varchar(200);"`
+	// 图片在服务服务器存储的Key
+	ImageKey string `gorm:"type:varchar(100)"`
 	// 发现的详细地点
 	PlaceDetail string `gorm:"type:varchar(500);"`
 	// 当前位置：0-留在原地 1-自己带走 2-教导失物招领处

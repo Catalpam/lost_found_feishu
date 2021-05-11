@@ -3,12 +3,12 @@ package main
 import (
 	"context"
 	"fmt"
-	"lost_found/card"
-	"lost_found/card/model"
 	"lost_found/core"
 	"lost_found/core/constants"
 	coremodel "lost_found/core/model"
 	"lost_found/core/tools"
+	card2 "lost_found/handler/card"
+	model2 "lost_found/handler/card/model"
 	"lost_found/sample/configs"
 )
 
@@ -18,7 +18,7 @@ func main() {
 	// var conf = configs.TestConfig("https://open.feishu.cn")
 	var conf = configs.TestConfig(constants.DomainFeiShu)
 
-	card.SetHandler(conf, func(coreCtx *core.Context, card *model.Card) (interface{}, error) {
+	card2.SetHandler(conf, func(coreCtx *core.Context, card *model2.Card) (interface{}, error) {
 		fmt.Println(coreCtx.GetRequestID())
 		fmt.Println(tools.Prettify(card.Action))
 		return nil, nil
@@ -38,6 +38,6 @@ func main() {
 		Header: coremodel.NewOapiHeader(header),
 		Body:   "{json}", // from http request body
 	}
-	resp := card.Handle(conf, req)
+	resp := card2.Handle(conf, req)
 	fmt.Println(tools.Prettify(resp))
 }

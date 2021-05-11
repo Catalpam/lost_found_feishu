@@ -5,26 +5,27 @@ import (
 	"github.com/gin-gonic/gin"
 	"lost_found/common"
 	"lost_found/dbModel"
+	"lost_found/handler"
 	"net/http"
 	"strconv"
 	"strings"
 	"time"
 )
 
-func AddFound(ctx *gin.Context)  {
+func AddFound(ctx *gin.Context) {
 	db := common.GetDB()
 
 	//获取参数
-	typeIndex,_ := ctx.GetPostForm("type_index")
+	typeIndex, _ := ctx.GetPostForm("type_index")
 	itemInfo, _ := ctx.GetPostForm("info")
 	image, _ := ctx.GetPostForm("image")
 	campus_id, _ := ctx.GetPostForm("campus_id")
 	placeIndex, _ := ctx.GetPostForm("place_index")
-	placeDetail,_ := ctx.GetPostForm("place_detail")
+	placeDetail, _ := ctx.GetPostForm("place_detail")
 	losterInfo, _ := ctx.GetPostForm("loster_info")
-	currentPlace,_ := ctx.GetPostForm("current_place")
-	currentPlaceDetail,_ := ctx.GetPostForm("current_place_detail")
-	additionalInfo,_ := ctx.GetPostForm("additional_info")
+	currentPlace, _ := ctx.GetPostForm("current_place")
+	currentPlaceDetail, _ := ctx.GetPostForm("current_place_detail")
+	additionalInfo, _ := ctx.GetPostForm("additional_info")
 
 	//检查有无空参数
 	{
@@ -98,12 +99,12 @@ func AddFound(ctx *gin.Context)  {
 				return
 			}
 		} else if (currentPlace != "0") && (currentPlace != "1") {
-				ctx.JSON(http.StatusOK, gin.H{
-					"code": 413,
-					"data": "",
-					"msg":  "current_place不合法",
-				})
-				return
+			ctx.JSON(http.StatusOK, gin.H{
+				"code": 413,
+				"data": "",
+				"msg":  "current_place不合法",
+			})
+			return
 		}
 	}
 
@@ -145,7 +146,6 @@ func AddFound(ctx *gin.Context)  {
 		SubTypeName = subtypes[id_2]
 	}
 
-
 	//获取place信息
 	var subPlace = ""
 	index1 = ""
@@ -156,11 +156,11 @@ func AddFound(ctx *gin.Context)  {
 	for _, str := range str0 {
 		index1 = index1 + str
 	}
-	println("--------------" + "index1:"+ index1 + "----------------------")
+	println("--------------" + "index1:" + index1 + "----------------------")
 	for _, str := range str1 {
 		index2 = index2 + str
 	}
-	println("--------------" + "index2:"+ index2 + "----------------------")
+	println("--------------" + "index2:" + index2 + "----------------------")
 	id_2, err2 = strconv.Atoi(index2)
 	if err2 != nil {
 		ctx.JSON(http.StatusOK, gin.H{
@@ -171,7 +171,7 @@ func AddFound(ctx *gin.Context)  {
 		return
 	}
 	var place dbModel.Place
-	db.Where("place_id =? AND campus_id=?", index1,campus_id).First(&place)
+	db.Where("place_id =? AND campus_id=?", index1, campus_id).First(&place)
 	var subareas []string
 	_ = json.Unmarshal([]byte(place.Subareas), &subareas)
 	println("--------------" + "断点！！！" + "----------------------")
@@ -187,7 +187,26 @@ func AddFound(ctx *gin.Context)  {
 	}
 
 	var campus dbModel.Campus
-	db.Where("campus_id=?",campus_id).First(&campus)
+	db.Where("campus_id=?", campus_id).First(&campus)
+
+	//上传图片至飞书服务器
+	var imageArray []string
+	_ = json.Unmarshal([]byte(image), &imageArray)
+	println(imageArray[0])
+	imageName := strings.Split(imageArray[0], `?name=`)
+	println(imageName[0])
+	println(imageName[1])
+	imageKey, err := handler.Uploadimage2Feishu(imageName[1])
+	if err != nil {
+		println("---------------图片上传至飞书服务器失败 Error：-------------")
+		println(err)
+		ctx.JSON(http.StatusOK, gin.H{
+			"code": 413,
+			"data": "",
+			"msg":  "image不合法，请检查图片链接或者数组格式是否合法!",
+		})
+		return
+	}
 
 	//获取用户OpenId
 	OpenId := ctx.MustGet("open_id").(string)
@@ -204,6 +223,7 @@ func AddFound(ctx *gin.Context)  {
 		SubPlace:           subPlace,
 		ItemInfo:           itemInfo,
 		Image:              image,
+		ImageKey:           imageKey,
 		PlaceDetail:        placeDetail,
 		CurrentPlace:       currentPlace,
 		CurrentPlaceDetail: currentPlaceDetail,
@@ -223,14 +243,14 @@ func GetFound(ctx *gin.Context) {
 	db := common.GetDB()
 	var founds []dbModel.Found
 	db.Find(&founds)
-	returnFounds(&founds,ctx)
+	returnFounds(&founds, ctx)
 }
 
 func Get_Found(ctx *gin.Context) {
 	db := common.GetDB()
 	var founds []dbModel.Found
 
-	typeIndex,_ := ctx.GetPostForm("type_index")
+	typeIndex, _ := ctx.GetPostForm("type_index")
 	//placeIndex,_ := ctx.GetPostForm("place_index")
 	//timeSession,_ := ctx.GetPostForm("time_session")
 
@@ -246,8 +266,8 @@ func Get_Found(ctx *gin.Context) {
 		db.Find(&founds)
 	} else {
 		//查找TypeId对应的类型属性存在于数据库中
-		TypeId:= ""
-		str_arr :=  strings.Split(typeIndex, `,`)
+		TypeId := ""
+		str_arr := strings.Split(typeIndex, `,`)
 		str0 := strings.Split(str_arr[0], `{`)
 		str1 := strings.Split(str_arr[1], `}`)
 		for _, str := range str0 {
@@ -259,7 +279,7 @@ func Get_Found(ctx *gin.Context) {
 		println(TypeId)
 		var thing dbModel.Type
 		db.Where("type_id = ?", TypeId).Order("type_id ASC").First(&thing)
-		if thing.ID == 0{
+		if thing.ID == 0 {
 			ctx.JSON(http.StatusOK, gin.H{
 				"code": 413,
 				"data": TypeId,
@@ -271,11 +291,11 @@ func Get_Found(ctx *gin.Context) {
 		println(thing.Type)
 		db.Where("type_name = ?", thing.Type).Find(&founds)
 	}
-	returnFounds(&founds,ctx)
+	returnFounds(&founds, ctx)
 }
 
-func returnFounds(founds *[]dbModel.Found, ctx *gin.Context)  {
-	if len(*founds) == 0{
+func returnFounds(founds *[]dbModel.Found, ctx *gin.Context) {
+	if len(*founds) == 0 {
 		ctx.JSON(http.StatusOK, gin.H{
 			"code": 404,
 			"msg":  "没有查询到符合条件的Founds",
