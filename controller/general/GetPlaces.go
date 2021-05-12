@@ -22,7 +22,7 @@ func GetPlaces(ctx *gin.Context) {
 	db.Where("campus_id = ?", campusId).Order("place_id ASC").Find(&place)
 	println(place[0].Name)
 	for _, itemClass := range place {
-		text = text + itemClass.Name + ","
+		text = text + "\"" + itemClass.Name + "\","
 	}
 	text = text + "],"
 

@@ -52,24 +52,27 @@ type Lost struct {
 	// Match时间
 	UpdatedAt time.Time
 
+	//Loster的OpenId
+	LosterOpenId string `gorm:"type:char(50);not null"`
 	//匹配的Found ID
 	MatchID   	uint `gorm:"unique"`
 
 	// 物品类型 为Thing表的NameID
 	TypeId string `gorm:"type:varchar(20);not null;"`
-	// 物品信息
-	ItemInfo string `gorm:"type:varchar(500);"`
-	// 图片 直接保存为Image Key的Json
-	Image string `gorm:"type:varchar(200);nor null;"`
-	// 丢失地点 为Location表的NameID
-	LostPlaces string `gorm:"type:char(500);not null"`
+
+	// 丢失地点
+	LostPlace1 string `gorm:"type:char(100);not null"`
+	LostPlace2 string `gorm:"type:char(100);"`
+	LostPlace3 string `gorm:"type:char(100);"`
+
+	LostDate string `gorm:"type:char(15);"`
 	// 大致丢失的时间段
 	//morning    上午（6：00-11：00）
 	//noon       中午（11：00-2：00）
 	//afternoon  下午（2：00-19：00）
 	//evening    晚上（19：00-22：00）
 	//night      夜间（00：00-6：00，22：00-24：00）
-	LostTimeSession string `gorm:"type:varchar(20);not null"`
+	LostTimeSession string `gorm:"type:varchar(20);"`
 }
 
 type LostPlace struct {

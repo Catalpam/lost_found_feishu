@@ -99,6 +99,7 @@ func CollectRoute(r *gin.Engine) *gin.Engine {
 	miniRoutes.POST("/getplaces", general.GetPlaces)
 	miniRoutes.POST("/addfound", miniController.AddFound)
 	miniRoutes.POST("/getfound", miniController.GetFound)
+	miniRoutes.POST("/addlost", miniController.AddLost)
 	miniRoutes.POST("/uploadimg", controller.UploadImg)
 
 	//后台管理Web登录
