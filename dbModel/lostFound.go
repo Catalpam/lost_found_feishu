@@ -9,6 +9,11 @@ type Found struct {
 	ID uint `gorm:"primary_key"`
 	// 发现时间
 	CreatedAt time.Time
+	// Match时间
+	UpdatedAt time.Time
+	// 匹配的编号
+	MatchId uint `gorm:"unique;"`
+
 	//发现日期&时间&时间段
 	FoundDate        string `gorm:"type:varchar(20);not null;"`
 	FoundTime        string `gorm:"type:varchar(20);not null;"`
@@ -44,7 +49,11 @@ type Lost struct {
 	//gorm Model
 	ID        uint `gorm:"primary_key"`
 	CreatedAt time.Time
+	// Match时间
 	UpdatedAt time.Time
+
+	//匹配的Found ID
+	MatchID   	uint `gorm:"unique"`
 
 	// 物品类型 为Thing表的NameID
 	TypeId string `gorm:"type:varchar(20);not null;"`
@@ -53,14 +62,21 @@ type Lost struct {
 	// 图片 直接保存为Image Key的Json
 	Image string `gorm:"type:varchar(200);nor null;"`
 	// 丢失地点 为Location表的NameID
-	Place1 string `gorm:"type:char(12);not null"`
-	Place2 string `gorm:"type:char(12);not null"`
-	Place3 string `gorm:"type:char(12);not null"`
-	// 丢失时间段 可以填
-	//Morning    上午（6：00-11：00）
-	//Noon       中午（11：00-2：00）
-	//Afternoon  下午（2：00-19：00）
-	//Evening    晚上（19：00-22：00）
-	//Night      夜间（00：00-6：00，22：00-24：00）
-	TimeSession string `gorm:"type:varchar(20);not null"`
+	LostPlaces string `gorm:"type:char(500);not null"`
+	// 大致丢失的时间段
+	//morning    上午（6：00-11：00）
+	//noon       中午（11：00-2：00）
+	//afternoon  下午（2：00-19：00）
+	//evening    晚上（19：00-22：00）
+	//night      夜间（00：00-6：00，22：00-24：00）
+	LostTimeSession string `gorm:"type:varchar(20);not null"`
 }
+
+type LostPlace struct {
+	ID       uint `gorm:"primary_key"`
+	CampusName string `gorm:"type:varchar(100);not null"`
+	PlaceName string `gorm:"type:varchar(100);not null"`
+	SubPlaceName string `gorm:"type:varchar(100);not null"`
+}
+
+type LostPlaceList []LostPlace
