@@ -48,6 +48,6 @@ func Uploadimage2Feishu(imageName string) (string, error) {
 		fmt.Println(e.Msg)
 		return "", err
 	}
-	fmt.Println("图片上传至飞书服务器成功，Imageey: " + ret.ImageKey)
+	fmt.Println("图片上传至飞书服务器成功，ImageKey: " + ret.ImageKey)
 	return ret.ImageKey, nil
 }

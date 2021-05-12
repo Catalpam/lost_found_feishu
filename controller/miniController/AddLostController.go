@@ -159,7 +159,7 @@ func AddLost(ctx *gin.Context)  {
 		LostTimeSession: timeSession,
 	}
 
-	db.Create(&newFound)
+	db.Create(&newLost)
 	ctx.JSON(http.StatusOK, gin.H{
 		"code": 200,
 		"data": newLost,

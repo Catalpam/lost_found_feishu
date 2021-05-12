@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func GetFound(ctx *gin.Context) {
+func GetFoundList(ctx *gin.Context) {
 	db := common.GetDB()
 	var founds []dbModel.Found
 	db.Find(&founds)
@@ -63,6 +63,7 @@ func Get_Found(ctx *gin.Context) {
 	returnFounds(&founds,ctx)
 }
 
+
 func returnFounds(founds *[]dbModel.Found, ctx *gin.Context)  {
 	if len(*founds) == 0{
 		ctx.JSON(http.StatusOK, gin.H{
@@ -71,9 +72,35 @@ func returnFounds(founds *[]dbModel.Found, ctx *gin.Context)  {
 		})
 		return
 	}
+	var FoundList []FoundListModel
+	for _, value := range *founds {
+		tempFound := FoundListModel{
+			ID:        string(value.ID),
+			SubType:   value.SubType,
+			Campus:    value.Campus,
+			Place:     value.Place,
+			Image:	   value.ImageHome,
+			FoundDate: value.FoundDate,
+			FoundTime: value.FoundTime,
+		}
+		FoundList = append(FoundList, tempFound)
+	}
 	ctx.JSON(http.StatusOK, gin.H{
 		"code": 200,
-		"data": *founds,
-		"msg":  "获取Found成功",
+		"data": FoundList,
+		"msg":  "获取Found List成功",
 	})
+}
+
+type FoundListModel struct {
+	ID string
+	SubType string
+	// Location
+	Campus string
+	Place string
+	// Image
+	Image string
+	// Time
+	FoundDate string
+	FoundTime string
 }

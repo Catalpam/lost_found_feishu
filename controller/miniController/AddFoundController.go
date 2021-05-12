@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"lost_found/common"
 	"lost_found/dbModel"
+	"lost_found/handler"
 	"net/http"
 	"strconv"
 	"strings"
@@ -189,11 +190,32 @@ func AddFound(ctx *gin.Context)  {
 	var campus dbModel.Campus
 	db.Where("campus_id=?",campus_id).First(&campus)
 
+	//解析image数组
+	var imageList []string
+	imageListErr := json.Unmarshal([]byte(image), &imageList)
+	if imageListErr != nil {
+		ctx.JSON(http.StatusOK, gin.H{
+			"code": 413,
+			"data": "",
+			"msg":  "Image List格式不合法!",
+		})
+		return
+	}
+	imageNameList := strings.Split(imageList[0],`image?name=`)
+	imageKey, errUpload := handler.Uploadimage2Feishu(imageNameList[1])
+	if errUpload != nil {
+		ctx.JSON(http.StatusOK, gin.H{
+			"code": 413,
+			"data": imageList[0],
+			"msg":  "ImageUrl必须是之前上传过的图片!",
+		})
+		println(errUpload)
+		return
+	}
 	//获取用户OpenId
 	OpenId := ctx.MustGet("open_id").(string)
 	//将新的Found对象添加至数据库中
 	newFound := dbModel.Found{
-		ID:                 0,
 		FoundDate:          time.Now().Format("2006-01-02"),
 		FoundTime:          time.Now().Format("15:04"),
 		FoundTimeSession:   Time2Session(),
@@ -205,6 +227,8 @@ func AddFound(ctx *gin.Context)  {
 		SubPlace:           subPlace,
 		ItemInfo:           itemInfo,
 		Image:              image,
+		ImageHome:          imageList[0],
+		ImageKey: 			imageKey,
 		PlaceDetail:        placeDetail,
 		CurrentPlace:       currentPlace,
 		CurrentPlaceDetail: currentPlaceDetail,

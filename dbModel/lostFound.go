@@ -12,7 +12,7 @@ type Found struct {
 	// Match时间
 	UpdatedAt time.Time
 	// 匹配的编号
-	MatchId uint `gorm:"unique;"`
+	MatchId string `gorm:"type:varchar(20);not null;"`
 
 	//发现日期&时间&时间段
 	FoundDate        string `gorm:"type:varchar(20);not null;"`
@@ -31,8 +31,10 @@ type Found struct {
 
 	// 物品信息
 	ItemInfo string `gorm:"type:varchar(500);"`
-	// 图片 直接存序列化好的数组[]string类型，以varchar保存
+	// 图片
 	Image string `gorm:"type:varchar(200);"`
+	ImageHome string `gorm:"type:varchar(200);"`
+	ImageKey string `gorm:"type:varchar(200);"`
 	// 发现的详细地点
 	PlaceDetail string `gorm:"type:varchar(500);"`
 	// 当前位置：0-留在原地 1-自己带走 2-教导失物招领处

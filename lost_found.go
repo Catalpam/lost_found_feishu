@@ -98,7 +98,7 @@ func CollectRoute(r *gin.Engine) *gin.Engine {
 	miniRoutes.POST("/getcampus", general.GetCampus)
 	miniRoutes.POST("/getplaces", general.GetPlaces)
 	miniRoutes.POST("/addfound", miniController.AddFound)
-	miniRoutes.POST("/getfound", miniController.GetFound)
+	miniRoutes.POST("/getfound", miniController.GetFoundList)
 	miniRoutes.POST("/addlost", miniController.AddLost)
 	miniRoutes.POST("/uploadimg", controller.UploadImg)
 
