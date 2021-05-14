@@ -10,11 +10,11 @@ import (
 	"strings"
 )
 
-func AddLost(ctx *gin.Context)  {
+func AddLost(ctx *gin.Context) {
 	db := common.GetDB()
 
 	//获取参数
-	typeIndex,_ := ctx.GetPostForm("type_index")
+	typeIndex, _ := ctx.GetPostForm("type_index")
 	campusId, _ := ctx.GetPostForm("campus_id")
 	place1, _ := ctx.GetPostForm("place_1")
 	place2, _ := ctx.GetPostForm("place_2")
@@ -48,8 +48,19 @@ func AddLost(ctx *gin.Context)  {
 			})
 			return
 		}
-	}
 
+		switch timeSession {
+		case "morning", "noon", "afternoon", "evening", "night":
+			println("timeSession合法")
+		default:
+			ctx.JSON(http.StatusOK, gin.H{
+				"code": 413,
+				"data": "",
+				"msg":  "参数不合法：time_session应为五个参数中的一种",
+			})
+			return
+		}
+	}
 
 	var PlaceCom1 string = ""
 	var PlaceCom2 string = ""
@@ -58,17 +69,17 @@ func AddLost(ctx *gin.Context)  {
 	//查找地理位置是否合法
 	var placeCnt int
 	var placeHasErr = false
-	if place1 == ""{
+	if place1 == "" {
 		placeCnt = 0
 	} else if place2 == "" {
 		placeCnt = 1
-		PlaceComByte1,_ := json.Marshal(CheckPlace(place1,campusId,&placeHasErr))
+		PlaceComByte1, _ := json.Marshal(CheckPlace(place1, campusId, &placeHasErr))
 		PlaceCom1 = string(PlaceComByte1)
 
 	} else if place3 == "" {
 		placeCnt = 2
-		PlaceComByte1,_ := json.Marshal(CheckPlace(place1,campusId,&placeHasErr))
-		PlaceComByte2,_ := json.Marshal(CheckPlace(place2,campusId,&placeHasErr))
+		PlaceComByte1, _ := json.Marshal(CheckPlace(place1, campusId, &placeHasErr))
+		PlaceComByte2, _ := json.Marshal(CheckPlace(place2, campusId, &placeHasErr))
 		PlaceCom1 = string(PlaceComByte1)
 		PlaceCom2 = string(PlaceComByte2)
 		if place1 == place2 {
@@ -81,13 +92,13 @@ func AddLost(ctx *gin.Context)  {
 		}
 	} else {
 		placeCnt = 3
-		PlaceComByte1,_ := json.Marshal(CheckPlace(place1,campusId,&placeHasErr))
-		PlaceComByte2,_ := json.Marshal(CheckPlace(place2,campusId,&placeHasErr))
-		PlaceComByte3,_ := json.Marshal(CheckPlace(place3,campusId,&placeHasErr))
+		PlaceComByte1, _ := json.Marshal(CheckPlace(place1, campusId, &placeHasErr))
+		PlaceComByte2, _ := json.Marshal(CheckPlace(place2, campusId, &placeHasErr))
+		PlaceComByte3, _ := json.Marshal(CheckPlace(place3, campusId, &placeHasErr))
 		PlaceCom1 = string(PlaceComByte1)
 		PlaceCom2 = string(PlaceComByte2)
 		PlaceCom3 = string(PlaceComByte3)
-		if place1 == place2 || place1 == place3 || place2 == place3{
+		if place1 == place2 || place1 == place3 || place2 == place3 {
 			ctx.JSON(http.StatusOK, gin.H{
 				"code": 414,
 				"data": "",
@@ -96,7 +107,7 @@ func AddLost(ctx *gin.Context)  {
 			return
 		}
 	}
-	if placeCnt == 0 || placeHasErr == true{
+	if placeCnt == 0 || placeHasErr == true {
 		ctx.JSON(http.StatusOK, gin.H{
 			"code": 415,
 			"data": "",
@@ -144,18 +155,18 @@ func AddLost(ctx *gin.Context)  {
 	}
 
 	var campus dbModel.Campus
-	db.Where("campus_id=?",campusId).First(&campus)
+	db.Where("campus_id=?", campusId).First(&campus)
 
 	//获取用户OpenId
 	OpenId := ctx.MustGet("open_id").(string)
 	//将新的Found对象添加至数据库中
 	newLost := dbModel.Lost{
-		LosterOpenId: 	 OpenId,
+		LosterOpenId:    OpenId,
 		TypeId:          SubTypeName,
 		LostPlace1:      PlaceCom1,
 		LostPlace2:      PlaceCom2,
 		LostPlace3:      PlaceCom3,
-		LostDate: 		 LostDate,
+		LostDate:        LostDate,
 		LostTimeSession: timeSession,
 	}
 
@@ -168,7 +179,7 @@ func AddLost(ctx *gin.Context)  {
 }
 
 //获取Place信息
-func CheckPlace(placeIndex string,campusId string,hasErr *bool) []string {
+func CheckPlace(placeIndex string, campusId string, hasErr *bool) []string {
 	db := common.GetDB()
 	index1 := ""
 	index2 := ""
@@ -178,25 +189,25 @@ func CheckPlace(placeIndex string,campusId string,hasErr *bool) []string {
 	for _, str := range str0 {
 		index1 = index1 + str
 	}
-	println("--------------" + "index1:"+ index1 + "----------------------")
+	println("--------------" + "index1:" + index1 + "----------------------")
 	for _, str := range str1 {
 		index2 = index2 + str
 	}
-	println("--------------" + "index2:"+ index2 + "----------------------")
+	println("--------------" + "index2:" + index2 + "----------------------")
 	id_2, err2 := strconv.Atoi(index2)
 	if err2 != nil {
 		*hasErr = true
-		return []string{"",""}
+		return []string{"", ""}
 	}
 	var place dbModel.Place
-	db.Where("place_id =? AND campus_id=?", index1,campusId).First(&place)
+	db.Where("place_id =? AND campus_id=?", index1, campusId).First(&place)
 	var subareas []string
 	_ = json.Unmarshal([]byte(place.Subareas), &subareas)
 	println("--------------" + "断点！！！" + "----------------------")
 	if id_2 > (len(subareas) - 1) {
 		*hasErr = true
-		return []string{"",""}
+		return []string{"", ""}
 	} else {
-		return []string{place.Name,subareas[id_2]}
+		return []string{place.Name, subareas[id_2]}
 	}
 }

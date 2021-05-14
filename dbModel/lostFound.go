@@ -12,8 +12,7 @@ type Found struct {
 	// Match时间
 	UpdatedAt time.Time
 	// 匹配的编号
-	MatchId string `gorm:"type:varchar(20);not null;"`
-
+	MatchId uint
 	//发现日期&时间&时间段
 	FoundDate        string `gorm:"type:varchar(20);not null;"`
 	FoundTime        string `gorm:"type:varchar(20);not null;"`
@@ -57,7 +56,7 @@ type Lost struct {
 	//Loster的OpenId
 	LosterOpenId string `gorm:"type:char(50);not null"`
 	//匹配的Found ID
-	MatchID   	uint `gorm:"unique"`
+	MatchID   	uint
 
 	// 物品类型 为Thing表的NameID
 	TypeId string `gorm:"type:varchar(20);not null;"`

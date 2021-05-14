@@ -14,7 +14,6 @@ import (
 
 func AddFound(ctx *gin.Context)  {
 	db := common.GetDB()
-
 	//获取参数
 	typeIndex,_ := ctx.GetPostForm("type_index")
 	itemInfo, _ := ctx.GetPostForm("info")
