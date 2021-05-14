@@ -162,7 +162,7 @@ func AddLost(ctx *gin.Context) {
 	//将新的Found对象添加至数据库中
 	newLost := dbModel.Lost{
 		LosterOpenId:    OpenId,
-		TypeId:          SubTypeName,
+		TypeSubName:     SubTypeName,
 		LostPlace1:      PlaceCom1,
 		LostPlace2:      PlaceCom2,
 		LostPlace3:      PlaceCom3,

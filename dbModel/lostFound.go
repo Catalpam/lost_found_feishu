@@ -59,7 +59,7 @@ type Lost struct {
 	MatchID   	uint
 
 	// 物品类型 为Thing表的NameID
-	TypeId string `gorm:"type:varchar(20);not null;"`
+	TypeSubName string `gorm:"type:varchar(20);not null;"`
 
 	// 丢失地点
 	LostPlace1 string `gorm:"type:char(100);not null"`

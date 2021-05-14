@@ -93,14 +93,17 @@ func returnFounds(founds *[]dbModel.Found, ctx *gin.Context)  {
 	var FoundList []FoundListModel
 	for _, value := range *founds {
 		tempFound := FoundListModel{
-			ID:        value.ID,
-			SubType:   value.SubType,
-			Campus:    value.Campus,
-			Place:     value.Place,
-			Image:	   value.ImageHome,
-			FoundDate: value.FoundDate,
-			FoundTime: value.FoundTime,
-			ItemInfo: value.ItemInfo,
+			ID:        			value.ID,
+			SubType:   			value.SubType,
+			Campus:    			value.Campus,
+			Place:     			value.Place+"-"+value.SubPlace,
+			PlaceDetail: 		value.PlaceDetail,
+			Image:	   			value.ImageHome,
+			ImageList: 			value.Image,
+			FoundDate: 		 	value.FoundDate,
+			FoundTime: 		 	value.FoundTime,
+			ItemInfo: 		 	value.ItemInfo,
+			AdditionalInfo : 	value.AdditionalInfo,
 		}
 		FoundList = append(FoundList, tempFound)
 	}
@@ -117,12 +120,15 @@ type FoundListModel struct {
 	// Location
 	Campus string
 	Place string
+	PlaceDetail string
 	// Image
 	Image string
+	ImageList string
 	// Time
 	FoundDate string
 	FoundTime string
 	ItemInfo string
+	AdditionalInfo string
 }
 
 func SelectFound(founds *[]dbModel.Found, ctx *gin.Context)  {
@@ -238,6 +244,5 @@ func SelectFound(founds *[]dbModel.Found, ctx *gin.Context)  {
 		SubPlace:           subPlace,
 		FoundDate:          date,
 		FoundTimeSession:   timeSession,
-		MatchId: 			0,
-	}).Find(&founds)
+	}).Where("match_id=?",0).Find(&founds)
 }

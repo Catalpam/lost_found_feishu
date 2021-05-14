@@ -101,6 +101,9 @@ func CollectRoute(r *gin.Engine) *gin.Engine {
 	miniRoutes.POST("/getfound", miniController.GetFoundList)
 	miniRoutes.POST("/addlost", miniController.AddLost)
 	miniRoutes.POST("/uploadimg", controller.UploadImg)
+	miniRoutes.POST("/claim", miniController.CliamFound)
+
+
 
 	//后台管理Web登录
 	r.GET("/weblogin", webController.Login302)
