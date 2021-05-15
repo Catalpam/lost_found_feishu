@@ -47,7 +47,7 @@ func GetCampus(ctx *gin.Context) {
 	db.Order("campus_id ASC").Find(&campuses)
 	println(campuses[0].Name)
 	for _, campus := range campuses {
-		text = text + campus.Name + ","
+		text = text + `"` + campus.Name + `"` + ","
 	}
 	text = text + "]"
 	ctx.JSON(http.StatusOK, gin.H{

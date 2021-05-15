@@ -23,8 +23,8 @@ func CliamFound(ctx *gin.Context) {
 		})
 		return
 	}
-	FoundId, err := strconv.ParseUint(ctx.PostForm("id"), 10 ,32)
-	LostId,errLostId := strconv.ParseUint(LostIdStr,10,32)
+	FoundId, err := strconv.ParseUint(ctx.PostForm("id"), 10, 32)
+	LostId, errLostId := strconv.ParseUint(LostIdStr, 10, 32)
 	if err != nil {
 		ctx.JSON(http.StatusOK, gin.H{
 			"code": 413,
@@ -33,8 +33,7 @@ func CliamFound(ctx *gin.Context) {
 		})
 		return
 	}
-	println(FoundId)
-	db.Where("id=?",FoundId).First(&found)
+	db.Where("id=?", FoundId).First(&found)
 	if found.MatchId != 0 {
 		ctx.JSON(http.StatusOK, gin.H{
 			"code": 400,
@@ -43,26 +42,27 @@ func CliamFound(ctx *gin.Context) {
 		})
 		return
 	}
-	if errLostId != nil {
-		db.Model(&found).Update("match_id",LostId )
+	if errLostId != nil && LostId != 0 {
+		db.Model(&found).Update("match_id", LostId)
 	} else {
 		newLost := dbModel.Lost{
-			LosterOpenId: ctx.MustGet("open_id").(string),
-			TypeSubName:  	 found.SubType,
-			LostPlace1:      "["+found.Place+","+found.SubPlace+"]",
+			LosterOpenId:    ctx.MustGet("open_id").(string),
+			TypeSubName:     found.SubType,
+			LostPlace1:      "[\"" + found.Place + "\",\"" + found.SubPlace + "\"]",
 			LostDate:        found.FoundDate,
 			LostTimeSession: found.FoundTimeSession,
-			MatchID:      	found.ID,
+			MatchID:         found.ID,
 		}
 		db.Create(&newLost)
-		db.Model(&found).Update("match_id",newLost.ID)
+		println("----------newLost.ID----------------")
+		println(newLost.ID)
+		db.Model(&found).Update("match_id", newLost.ID)
 	}
-	db.Model(&found).Update("match_id", )
-	returnFoundDeatil(&found,ctx)
+	returnFoundDeatil(&found, ctx)
 }
 
-func returnFoundDeatil(found *dbModel.Found, ctx *gin.Context)  {
-	if found.ID == 0{
+func returnFoundDeatil(found *dbModel.Found, ctx *gin.Context) {
+	if found.ID == 0 {
 		ctx.JSON(http.StatusOK, gin.H{
 			"code": 404,
 			"msg":  "没有查询到符合条件的Founds",
@@ -71,38 +71,37 @@ func returnFoundDeatil(found *dbModel.Found, ctx *gin.Context)  {
 	}
 
 	FoundDetail := FoundDetailModel{
-		ID:        found.ID,
-		SubType:   found.SubType,
-		Campus:    found.Campus,
-		Place:     found.Place,
-		Image:	   found.ImageHome,
-		FoundDate: found.FoundDate,
-		FoundTime: found.FoundTime,
-		ItemInfo:  found.ItemInfo,
-		CurrentPlace: found.CurrentPlace,
+		ID:                 found.ID,
+		SubType:            found.SubType,
+		Campus:             found.Campus,
+		Place:              found.Place,
+		Image:              found.ImageHome,
+		FoundDate:          found.FoundDate,
+		FoundTime:          found.FoundTime,
+		ItemInfo:           found.ItemInfo,
+		CurrentPlace:       found.CurrentPlace,
 		CurrentPlaceDetail: found.CurrentPlaceDetail,
 	}
 	ctx.JSON(http.StatusOK, gin.H{
 		"code": 200,
 		"data": FoundDetail,
-		"msg":  "获取Found List成功",
+		"msg":  "认领成功！",
 	})
 	return
 }
 
-
 type FoundDetailModel struct {
-	ID uint
+	ID      uint
 	SubType string
 	// Location
 	Campus string
-	Place string
+	Place  string
 	// Image
 	Image string
 	// Time
 	FoundDate string
 	FoundTime string
-	ItemInfo string
+	ItemInfo  string
 	// 当前位置：0-留在原地 1-自己带走 2-放在他处
 	CurrentPlace string `gorm:"type:char(1);not null"`
 	// 当前位置：0-留在原地 1-自己带走 2-放在他处
