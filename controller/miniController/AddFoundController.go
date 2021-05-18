@@ -190,22 +190,22 @@ func AddFound(ctx *gin.Context)  {
 	db.Where("campus_id=?",campus_id).First(&campus)
 
 	//解析image数组
-	var imageList []string
-	imageListErr := json.Unmarshal([]byte(image), &imageList)
-	if imageListErr != nil {
-		ctx.JSON(http.StatusOK, gin.H{
-			"code": 413,
-			"data": "",
-			"msg":  "Image List格式不合法!",
-		})
-		return
-	}
-	imageNameList := strings.Split(imageList[0],`image?name=`)
+	//var imageList []string
+	//imageListErr := json.Unmarshal([]byte(image), &imageList)
+	//if imageListErr != nil {
+	//	ctx.JSON(http.StatusOK, gin.H{
+	//		"code": 413,
+	//		"data": "",
+	//		"msg":  "Image List格式不合法!",
+	//	})
+	//	return
+	//}
+	imageNameList := strings.Split(image,`image?name=`)
 	imageKey, errUpload := handler.Uploadimage2Feishu(imageNameList[1])
 	if errUpload != nil {
 		ctx.JSON(http.StatusOK, gin.H{
 			"code": 413,
-			"data": imageList[0],
+			"data": image,
 			"msg":  "ImageUrl必须是之前上传过的图片!",
 		})
 		println(errUpload)
@@ -226,7 +226,7 @@ func AddFound(ctx *gin.Context)  {
 		SubPlace:           subPlace,
 		ItemInfo:           itemInfo,
 		Image:              image,
-		ImageHome:          imageList[0],
+		ImageHome:          image,
 		ImageKey: 			imageKey,
 		PlaceDetail:        placeDetail,
 		CurrentPlace:       currentPlace,

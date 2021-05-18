@@ -44,6 +44,8 @@ type Found struct {
 	LosterInfo string `gorm:"type:varchar(500);"`
 	// 补充信息
 	AdditionalInfo string `gorm:"type:varchar(500)"`
+	//失主留言
+	LosterComment string `gorm:"type:varchar(500)"`
 }
 
 type Lost struct {
@@ -56,7 +58,7 @@ type Lost struct {
 	//Loster的OpenId
 	LosterOpenId string `gorm:"type:char(50);not null"`
 	//匹配的Found ID
-	MatchID   	uint
+	MatchId uint
 
 	// 物品类型 为Thing表的NameID
 	TypeSubName string `gorm:"type:varchar(20);not null;"`

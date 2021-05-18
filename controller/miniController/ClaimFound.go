@@ -42,6 +42,14 @@ func CliamFound(ctx *gin.Context) {
 		})
 		return
 	}
+	if found.ID == 0 {
+		ctx.JSON(http.StatusOK, gin.H{
+			"code": 404,
+			"msg":  "没有查询到符合条件的Founds",
+		})
+		return
+	}
+
 	if errLostId != nil && LostId != 0 {
 		db.Model(&found).Update("match_id", LostId)
 	} else {
@@ -51,7 +59,7 @@ func CliamFound(ctx *gin.Context) {
 			LostPlace1:      "[\"" + found.Place + "\",\"" + found.SubPlace + "\"]",
 			LostDate:        found.FoundDate,
 			LostTimeSession: found.FoundTimeSession,
-			MatchID:         found.ID,
+			MatchId:         found.ID,
 		}
 		db.Create(&newLost)
 		println("----------newLost.ID----------------")
@@ -62,13 +70,6 @@ func CliamFound(ctx *gin.Context) {
 }
 
 func returnFoundDeatil(found *dbModel.Found, ctx *gin.Context) {
-	if found.ID == 0 {
-		ctx.JSON(http.StatusOK, gin.H{
-			"code": 404,
-			"msg":  "没有查询到符合条件的Founds",
-		})
-		return
-	}
 
 	FoundDetail := FoundDetailModel{
 		ID:                 found.ID,

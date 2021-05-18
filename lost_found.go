@@ -14,13 +14,22 @@ import (
 
 func main() {
 
+	//cardMessage.SendCardMessage(
+	//	"ou_273dbf68377bc685de3dd11c6102f879",
+	//	cardMessage.ReSurveyCard(cardMessage.ReSurvey{
+	//		LostId:      "0",
+	//		ItemSubtype: "一个月后拿到的MBP",
+	//		FoundDate:   "2222-10-1",
+	//		ImageKey:    "img_2e320ed6-8a53-405a-b075-edec757ff25g",
+	//	}),
+	//)
 	cardMessage.SendCardMessage(
 		"ou_273dbf68377bc685de3dd11c6102f879",
-		cardMessage.ReSurveyCard(cardMessage.ReSurvey{
-			LostId:      "0",
-			ItemSubtype: "一个月后拿到的MBP",
-			FoundDate:   "2222-10-1",
-			ImageKey:    "img_2e320ed6-8a53-405a-b075-edec757ff25g",
+		cardMessage.LostAddedCard(cardMessage.LostAdded{
+			LostId: 	"strconv.Itoa(int(newLost.ID))",
+			ItemSubtype: "newLost.TypeSubName",
+			LostDate:    "2021-05-01"+" "+ "上午",
+			LostPlace:   "sendPlaceStr",
 		}),
 	)
 
@@ -102,6 +111,10 @@ func CollectRoute(r *gin.Engine) *gin.Engine {
 	miniRoutes.POST("/addlost", miniController.AddLost)
 	miniRoutes.POST("/uploadimg", controller.UploadImg)
 	miniRoutes.POST("/claim", miniController.CliamFound)
+	miniRoutes.GET("/me", miniController.GetMeInfo)
+	miniRoutes.POST("/me", miniController.GetMeInfo)
+
+
 
 
 

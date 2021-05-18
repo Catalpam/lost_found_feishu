@@ -7,6 +7,7 @@ import (
 	"lost_found/card/http"
 	"lost_found/card/model"
 	"lost_found/cardMessage"
+	"lost_found/comander"
 	"lost_found/core"
 	"lost_found/core/configs"
 	"lost_found/core/constants"
@@ -69,6 +70,13 @@ func ButtonHandler(value map[string]interface{}, openId string) {
 			//调试用，这里要修改的
 			cardMessage.SendMessage(openId,"好的，打扰您了。")
 		}
+
+	case ButtonCardType.LostAdded:
+		print("\n主动修改为已找到,LostId为：")
+		buttonValue := value["buttonValue"].(map[string]interface{})
+		LostId := buttonValue["LostId"].(int)
+		print("\n主动修改为已找到,LostId为：")
+		comander.HasFounded(uint64(LostId))
 	}
 }
 
@@ -77,11 +85,13 @@ type ButtonCardTypeModel struct {
 	Survey string
 	Suspected string
 	SameName string
+	LostAdded string
 }
 var ButtonCardType = ButtonCardTypeModel{
 	Survey:    "survey",
 	Suspected: "suspected",
 	SameName:  "same_name",
+	LostAdded: "cancelAdded",
 }
 
 // 每种带按钮卡片的按钮回调
@@ -100,3 +110,7 @@ type ButtonSameNameValueModel struct {
 	FoundId string
 	IsTrue string
 }
+type ButtonCancelAddedModel struct {
+	LostId string
+}
+

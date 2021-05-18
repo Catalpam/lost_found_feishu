@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"lost_found/dbModel"
 )
+
 func ItemTypeInitial() {
 	db := GetDB()
 	{
@@ -38,6 +39,42 @@ func ItemTypeInitial() {
 			newItemType = dbModel.ItemType{
 				Name:     "证件或证书",
 				TypeId:   "1",
+				Subtypes: string(subareasJson),
+			}
+			db.Create(&newItemType)
+		}
+	}
+	{
+		var newItemType dbModel.ItemType
+		db.Where("name=?", "个人物品").First(&newItemType)
+		if newItemType.ID == 0 {
+			subareas := []string{"衣物（含帽子手套围巾等）", "包", "眼镜", "钱包", "钥匙", "水杯", "化妆品", "首饰", "笔袋", "未领走快递", "雨伞", "运动器械相关"}
+			subareasJson, err := json.Marshal(subareas)
+			if err != nil {
+				println("--------Marshal error:------------")
+				println(err)
+			}
+			newItemType = dbModel.ItemType{
+				Name:     "个人物品",
+				TypeId:   "2",
+				Subtypes: string(subareasJson),
+			}
+			db.Create(&newItemType)
+		}
+	}
+	{
+		var newItemType dbModel.ItemType
+		db.Where("name=?", "学习用品").First(&newItemType)
+		if newItemType.ID == 0 {
+			subareas := []string{"笔袋", "书籍", "纸质笔记本"}
+			subareasJson, err := json.Marshal(subareas)
+			if err != nil {
+				println("--------Marshal error:------------")
+				println(err)
+			}
+			newItemType = dbModel.ItemType{
+				Name:     "学习用品",
+				TypeId:   "3",
 				Subtypes: string(subareasJson),
 			}
 			db.Create(&newItemType)

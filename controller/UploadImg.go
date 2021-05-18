@@ -13,7 +13,7 @@ import (
 func UploadImg(c *gin.Context){
 	f, err := c.FormFile("image")
 	if err != nil {
-		c.JSON(200, gin.H{
+		c.JSON(400, gin.H{
 			"code": 400,
 			"msg":  "上传失败!",
 		})
@@ -22,7 +22,7 @@ func UploadImg(c *gin.Context){
 
 		fileExt:=strings.ToLower(path.Ext(f.Filename))
 		if fileExt!=".png"&&fileExt!=".jpg"&&fileExt!=".gif"&&fileExt!=".jpeg"{
-			c.JSON(200, gin.H{
+			c.JSON(400, gin.H{
 				"code": 400,
 				"msg":  "上传失败!只允许png,jpg,gif,jpeg文件",
 			})

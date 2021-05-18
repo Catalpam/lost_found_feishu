@@ -85,7 +85,8 @@ func Get_Found(ctx *gin.Context) {
 func returnFounds(founds *[]dbModel.Found, ctx *gin.Context)  {
 	if len(*founds) == 0{
 		ctx.JSON(http.StatusOK, gin.H{
-			"code": 404,
+			"code": 200,
+			"data":"[]",
 			"msg":  "没有查询到符合条件的Founds",
 		})
 		return
@@ -102,7 +103,7 @@ func returnFounds(founds *[]dbModel.Found, ctx *gin.Context)  {
 			ImageList: 			value.Image,
 			FoundDate: 		 	value.FoundDate,
 			FoundTime: 		 	value.FoundTime,
-			ItemInfo: 		 	value.ItemInfo,
+			Info: 		 	value.ItemInfo,
 			AdditionalInfo : 	value.AdditionalInfo,
 		}
 		FoundList = append(FoundList, tempFound)
@@ -127,7 +128,7 @@ type FoundListModel struct {
 	// Time
 	FoundDate string
 	FoundTime string
-	ItemInfo string
+	Info string
 	AdditionalInfo string
 }
 

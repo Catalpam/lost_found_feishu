@@ -100,6 +100,21 @@ type Suspected struct {
 	FoundDate   string
 	ImageKey    string
 }
+func LostAddedCard(cardmodel LostAdded) string {
+	var cardContent = ""
+	formatRawCard := rawLostAddedCard
+	println(formatRawCard)
+	cardContent = fmt.Sprintf(formatRawCard, cardmodel.ItemSubtype,cardmodel.LostDate, cardmodel.LostPlace,LostAddedButton(cardmodel.LostId))
+	println(cardContent)
+	return cardContent
+}
+type LostAdded struct {
+	LostId 		string
+	ItemSubtype string
+	LostDate    string
+	LostPlace 	string
+}
+
 
 
 

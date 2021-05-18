@@ -8,6 +8,9 @@ func ReSurveyButton(lostId string) string {
 func ReSuspectedButton(lostId string,foundId string) string {
 	return fmt.Sprintf(ReSuspectedButtonRaw,lostId,foundId,lostId,foundId)
 }
+func LostAddedButton(lostId string) string {
+	return fmt.Sprintf(LostAddedButtonRaw,lostId)
+}
 
 
 //ReSurvey卡片按钮
@@ -99,7 +102,7 @@ const ReSuspectedButtonRaw = `
 		"content": "否"
       },
 	  "value": {
-		"buttonType": "survey",
+		"buttonType": "suspected",
 		"buttonValue": {
 		  "LostId": "%s",
 		  "FoundId": "%s",
@@ -111,5 +114,30 @@ const ReSuspectedButtonRaw = `
   ]
 }
 `
+
+//LostAdded卡片按钮
+const LostAddedButtonRaw = `
+{
+  "tag": "action",
+  "layout": "bisected",
+  "actions": [
+	{
+	  "tag": "button",
+	  "text": {
+		"tag": "plain_text",
+		"content": "已找到"
+	  },
+	  "value": {
+		"buttonType": "cancelAdded",
+		"buttonValue": {
+		  "LostId": "%s"
+		}
+	  },
+	  "type": "primary"
+	}
+  ]
+}
+`
+
 
 

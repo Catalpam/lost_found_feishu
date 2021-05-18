@@ -3,6 +3,7 @@ package miniController
 import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
+	"lost_found/cardMessage"
 	"lost_found/common"
 	"lost_found/dbModel"
 	"net/http"
@@ -169,13 +170,45 @@ func AddLost(ctx *gin.Context) {
 		LostDate:        LostDate,
 		LostTimeSession: timeSession,
 	}
-
 	db.Create(&newLost)
 	ctx.JSON(http.StatusOK, gin.H{
 		"code": 200,
 		"data": newLost,
 		"msg":  "添加Lost成功，之后有疑似您的Found被建立后，我们将在第一时间通知您！",
 	})
+
+
+	// 消息卡片：
+	var temPlaceStr []string
+	_ = json.Unmarshal([]byte(newLost.LostPlace1), &temPlaceStr)
+	sendPlaceStr := temPlaceStr[1]
+	if newLost.LostPlace2 != "" {
+		var temPlaceStr []string
+		_ = json.Unmarshal([]byte(newLost.LostPlace2), &temPlaceStr)
+		sendPlaceStr = sendPlaceStr + "," + temPlaceStr[1]
+	}
+	if newLost.LostPlace3 != "" {
+		var temPlaceStr []string
+		_ = json.Unmarshal([]byte(newLost.LostPlace3), &temPlaceStr)
+		sendPlaceStr = sendPlaceStr + "," + temPlaceStr[1]
+	}
+	timeSessionInChinese := ""
+	switch newLost.LostTimeSession {
+	case "morning": timeSessionInChinese = "上午（6：00-11：00）"
+	case "noon": timeSessionInChinese = "中午（11：00-2：00）"
+	case "afternoon": timeSessionInChinese = "下午（2：00-19：00）"
+	case "evening": timeSessionInChinese = "晚上（19：00-22：00）"
+	case "night": timeSessionInChinese = "夜间（00：00-6：00，22：00-24：00）"
+	}
+	cardMessage.SendCardMessage(
+		OpenId,
+		cardMessage.LostAddedCard(cardMessage.LostAdded{
+			LostId: 	strconv.Itoa(int(newLost.ID)),
+			ItemSubtype: newLost.TypeSubName,
+			LostDate:    newLost.LostDate +" "+timeSessionInChinese,
+			LostPlace:   sendPlaceStr,
+		}),
+	)
 }
 
 //获取Place信息
