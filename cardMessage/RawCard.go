@@ -53,16 +53,16 @@ const rawSuspectedCard = `
       "tag": "div",
       "text": {
         "tag": "lark_md",
-        "content": "已查询到您如下失物查询的可能的招领信息，请问是您的物品吗？"
+        "content": "已根据您之前添加的的Lost查询到如下Found招领信息，请问是您的物品吗？"
       }
     },
     {
       "tag": "img",
       "title": {
         "tag": "lark_md",
-        "content": "物品种类：%s\n发现时间：%s"
+        "content": "物品种类：%s\n发现地点：%s\n发现时间：%s"
       },
-      "img_key": "img_e344c476-1e58-4492-b40d-7dcffe9d6dfg",
+      "img_key": "%s",
       "alt": {
         "tag": "plain_text",
         "content": "图片"

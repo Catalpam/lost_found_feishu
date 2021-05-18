@@ -13,17 +13,21 @@ func CliamFound(ctx *gin.Context) {
 	var found dbModel.Found
 	// 获取Form中的参数 FoundId
 	FoundIdStr := ctx.PostForm("id")
+	if FoundIdStr == "" {
+		FoundIdStr = ctx.PostForm("found_id")
+	}
 	LostIdStr := ctx.PostForm("lost")
+
 	// 查找参数
 	if FoundIdStr == "" {
 		ctx.JSON(http.StatusOK, gin.H{
 			"code": 413,
 			"data": "",
-			"msg":  "缺少参数id！",
+			"msg":  "缺少参数id或found_id！",
 		})
 		return
 	}
-	FoundId, err := strconv.ParseUint(ctx.PostForm("id"), 10, 32)
+	FoundId, err := strconv.ParseUint(FoundIdStr, 10, 32)
 	LostId, errLostId := strconv.ParseUint(LostIdStr, 10, 32)
 	if err != nil {
 		ctx.JSON(http.StatusOK, gin.H{

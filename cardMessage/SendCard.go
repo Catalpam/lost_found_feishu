@@ -17,7 +17,8 @@ func SendCardMessage(OpenID string, cardContent string) {
 	println(cardContent)
 	err := json.Unmarshal([]byte(cardContent), &card)
 	if err != nil {
-		panic(err)
+		println("发送卡片错误，错误：")
+		println(err)
 	}
 	body := map[string]interface{}{
 		"open_id":  OpenID,

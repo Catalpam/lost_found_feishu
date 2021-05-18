@@ -12,6 +12,7 @@ import (
 	"lost_found/core/configs"
 	"lost_found/core/constants"
 	"lost_found/core/tools"
+	"strconv"
 )
 
 func CardEvent() gin.HandlerFunc {
@@ -73,10 +74,10 @@ func ButtonHandler(value map[string]interface{}, openId string) {
 
 	case ButtonCardType.LostAdded:
 		print("\n主动修改为已找到,LostId为：")
-		buttonValue := value["buttonValue"].(map[string]interface{})
-		LostId := buttonValue["LostId"].(int)
+		LostIdStr := value["LostId"].(string)
+		LostId, _ := strconv.ParseUint(LostIdStr, 10, 64)
 		print("\n主动修改为已找到,LostId为：")
-		comander.HasFounded(uint64(LostId))
+		comander.HasFounded(LostId)
 	}
 }
 

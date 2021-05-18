@@ -87,16 +87,17 @@ type ReSurvey struct {
 
 func SuspectedCard(cardmodel Suspected) string {
 	var cardContent = ""
-	formatRawCard := rawSurveyCard
+	formatRawCard := rawSuspectedCard
 	println(formatRawCard)
-	cardContent = fmt.Sprintf(formatRawCard, cardmodel.ItemSubtype,cardmodel.FoundDate, cardmodel.ImageKey,ReSurveyButton(cardmodel.LostId))
+	cardContent = fmt.Sprintf(formatRawCard, cardmodel.ItemSubtype,cardmodel.FoundPlace,cardmodel.FoundDate, cardmodel.ImageKey,SuspectedButton(cardmodel.FoundId,cardmodel.FoundId))
 	println(cardContent)
 	return cardContent
 }
 type Suspected struct {
-	LostId 		string
-	FoundId 	string
+	LostId 		uint
+	FoundId 	uint
 	ItemSubtype string
+	FoundPlace string
 	FoundDate   string
 	ImageKey    string
 }

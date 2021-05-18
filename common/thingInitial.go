@@ -30,7 +30,7 @@ func ItemTypeInitial() {
 		var newItemType dbModel.ItemType
 		db.Where("name=?", "证件或证书").First(&newItemType)
 		if newItemType.ID == 0 {
-			subareas := []string{"一卡通", "身份证", "学生证", "健身卡", "各种证书", "其他证件或证书"}
+			subareas := []string{"一卡通", "身份证", "学生证", "健身卡","考试通过证书","比赛奖状","其他证件或证书"}
 			subareasJson, err := json.Marshal(subareas)
 			if err != nil {
 				println("--------Marshal error:------------")
@@ -48,7 +48,7 @@ func ItemTypeInitial() {
 		var newItemType dbModel.ItemType
 		db.Where("name=?", "个人物品").First(&newItemType)
 		if newItemType.ID == 0 {
-			subareas := []string{"衣物（含帽子手套围巾等）", "包", "眼镜", "钱包", "钥匙", "水杯", "化妆品", "首饰", "笔袋", "未领走快递", "雨伞", "运动器械相关"}
+			subareas := []string{"衣物（含帽子手套围巾等）", "包", "眼镜", "钱包", "钥匙", "水杯", "化妆品", "首饰", "笔袋", "未领走快递", "雨伞", "运动器械相关","其它个人物品"}
 			subareasJson, err := json.Marshal(subareas)
 			if err != nil {
 				println("--------Marshal error:------------")

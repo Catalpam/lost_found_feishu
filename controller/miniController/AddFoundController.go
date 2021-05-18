@@ -3,6 +3,7 @@ package miniController
 import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
+	"lost_found/comander"
 	"lost_found/common"
 	"lost_found/dbModel"
 	"lost_found/handler"
@@ -236,6 +237,9 @@ func AddFound(ctx *gin.Context)  {
 	}
 
 	db.Create(&newFound)
+	// 新建一个匹配进程，若有符合匹配将会使用机器人发送
+	go comander.CheckNewFoundIsMatchedLost(newFound.ID)
+	// 此进程继续返回创立Found成功的Response
 	ctx.JSON(http.StatusOK, gin.H{
 		"code": 200,
 		"data": newFound,

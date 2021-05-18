@@ -2,7 +2,6 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	"lost_found/cardMessage"
 	"lost_found/common"
 	"lost_found/controller"
 	"lost_found/controller/general"
@@ -23,15 +22,15 @@ func main() {
 	//		ImageKey:    "img_2e320ed6-8a53-405a-b075-edec757ff25g",
 	//	}),
 	//)
-	cardMessage.SendCardMessage(
-		"ou_273dbf68377bc685de3dd11c6102f879",
-		cardMessage.LostAddedCard(cardMessage.LostAdded{
-			LostId: 	"strconv.Itoa(int(newLost.ID))",
-			ItemSubtype: "newLost.TypeSubName",
-			LostDate:    "2021-05-01"+" "+ "上午",
-			LostPlace:   "sendPlaceStr",
-		}),
-	)
+	//cardMessage.SendCardMessage(
+	//	"ou_273dbf68377bc685de3dd11c6102f879",
+	//	cardMessage.LostAddedCard(cardMessage.LostAdded{
+	//		LostId: 	"strconv.Itoa(int(newLost.ID))",
+	//		ItemSubtype: "newLost.TypeSubName",
+	//		LostDate:    "2021-05-01"+" "+ "上午",
+	//		LostPlace:   "sendPlaceStr",
+	//	}),
+	//)
 
 
 	//cardMessage.SendCardMessage(
@@ -111,6 +110,7 @@ func CollectRoute(r *gin.Engine) *gin.Engine {
 	miniRoutes.POST("/addlost", miniController.AddLost)
 	miniRoutes.POST("/uploadimg", controller.UploadImg)
 	miniRoutes.POST("/claim", miniController.CliamFound)
+	miniRoutes.POST("/thanks", miniController.ThanksMsg)
 	miniRoutes.GET("/me", miniController.GetMeInfo)
 	miniRoutes.POST("/me", miniController.GetMeInfo)
 
