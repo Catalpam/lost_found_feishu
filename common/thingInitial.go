@@ -66,7 +66,7 @@ func ItemTypeInitial() {
 		var newItemType dbModel.ItemType
 		db.Where("name=?", "学习用品").First(&newItemType)
 		if newItemType.ID == 0 {
-			subareas := []string{"笔袋", "书籍", "纸质笔记本"}
+			subareas := []string{"笔袋", "书籍", "纸质笔记本","其它学习物品"}
 			subareasJson, err := json.Marshal(subareas)
 			if err != nil {
 				println("--------Marshal error:------------")

@@ -16,15 +16,19 @@ func GetMeInfo(ctx *gin.Context)  {
 	db.Where("loster_open_id=?",OpenId).Find(&losts)
 	var myFounds []myFound
 	var myLosts 	 []myLost
+	// 统计数量
+	helpedCnt := 0
+	lostCnt := 0
 	for _, value := range founds {
 		var isMatched bool
 		if value.MatchId == 0{
 			isMatched = false
 		} else {
 			isMatched = true
+			helpedCnt ++
 		}
 		tempFound := myFound{
-			ID:        value.ID,
+			FoundID:        value.ID,
 			IsMatched: isMatched,
 			ItemType:  value.SubType,
 			Image:     value.Image,
@@ -38,10 +42,11 @@ func GetMeInfo(ctx *gin.Context)  {
 			isMatched = false
 		} else {
 			isMatched = true
+			lostCnt ++
 			db.Where("match_id=?",value.ID).First(&tempfound)
 		}
 		tempLost := myLost{
-			ID:        value.ID,
+			LostID:        value.ID,
 			IsMatched: isMatched,
 			ItemType:  value.TypeSubName,
 			Image:     tempfound.Image,
@@ -52,6 +57,8 @@ func GetMeInfo(ctx *gin.Context)  {
 	ctx.JSON(http.StatusOK, gin.H{
 		"code": 200,
 		"data": gin.H{
+			"HasHelped":helpedCnt,
+			"HasFound":lostCnt,
 			"MyLosts":myLosts,
 			"MyFounds":myFounds,
 		},
@@ -62,14 +69,14 @@ func GetMeInfo(ctx *gin.Context)  {
 
 type myFound struct {
 	//gorm Model
-	ID uint
+	FoundID uint
 	IsMatched bool
 	ItemType string
 	Image string
 }
 type myLost struct {
 	//gorm Model
-	ID uint `gorm:"primary_key"`
+	LostID uint `gorm:"primary_key"`
 	IsMatched bool
 	ItemType string `gorm:"type:varchar(20);not null;"`
 	Image string `gorm:"type:varchar(200);"`

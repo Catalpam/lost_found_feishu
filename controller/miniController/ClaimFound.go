@@ -2,6 +2,7 @@ package miniController
 
 import (
 	"github.com/gin-gonic/gin"
+	"lost_found/comander"
 	"lost_found/common"
 	"lost_found/dbModel"
 	"net/http"
@@ -70,6 +71,11 @@ func CliamFound(ctx *gin.Context) {
 		println(newLost.ID)
 		db.Model(&found).Update("match_id", newLost.ID)
 	}
+	// 若为自己带走，给两边发送信息
+	if found.CurrentPlace == "1" {
+		go comander.SendUesrToBoth(found.ID)
+	}
+	// 给小程序返回详情
 	returnFoundDeatil(&found, ctx)
 }
 
@@ -86,6 +92,7 @@ func returnFoundDeatil(found *dbModel.Found, ctx *gin.Context) {
 		ItemInfo:           found.ItemInfo,
 		CurrentPlace:       found.CurrentPlace,
 		CurrentPlaceDetail: found.CurrentPlaceDetail,
+		AdditionalInfo:		found.AdditionalInfo,
 	}
 	ctx.JSON(http.StatusOK, gin.H{
 		"code": 200,
@@ -111,4 +118,5 @@ type FoundDetailModel struct {
 	CurrentPlace string `gorm:"type:char(1);not null"`
 	// 当前位置：0-留在原地 1-自己带走 2-放在他处
 	CurrentPlaceDetail string `gorm:"type:char(200);"`
+	AdditionalInfo string `gorm:"type:varchar(500)"`
 }

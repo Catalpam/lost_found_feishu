@@ -2,6 +2,7 @@ package miniController
 
 import (
 	"github.com/gin-gonic/gin"
+	"lost_found/comander"
 	"lost_found/common"
 	"lost_found/dbModel"
 	"net/http"
@@ -68,7 +69,17 @@ func ThanksMsg(ctx *gin.Context) {
 		return
 	}
 
+	if found.LosterComment != "" {
+		ctx.JSON(http.StatusOK, gin.H{
+			"code": 400,
+			"data": "",
+			"msg":  "你已经表达过感谢了！",
+		})
+		return
+	}
+
 	db.Model(&found).Update("loster_comment", ThanksMsg)
+	go comander.SendThx(found.ID)
 	ctx.JSON(http.StatusOK, gin.H{
 		"code": 200,
 		"data":found.LosterComment,

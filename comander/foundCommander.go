@@ -86,3 +86,75 @@ func CheckNewFoundIsMatchedLost (newFoundId uint) {
 	}
 	return
 }
+
+func SendThx(FoundId uint)  {
+	db := common.GetDB()
+	var found dbModel.Found
+	var lost  dbModel.Lost
+	db.Where("id=?",FoundId).First(&found)
+	db.Where("id=?",found.MatchId).First(&lost)
+	if lost.ID == 0 || found.ID == 0 {
+		println("不存在对应Found或Lost")
+		return
+	}
+
+	cardMessage.SendCardMessage(
+		found.FoundOpenId,
+		cardMessage.FoundClaimCard(cardMessage.FoundClaim{
+			ItemSubtype:  found.SubType,
+			LeaveMessage: found.LosterComment,
+			ImageKey:     found.ImageKey,
+		}),
+	)
+	println("感谢信息发送成功！")
+
+	cardMessage.SendCardMessage(
+		lost.LosterOpenId,
+		cardMessage.ThanksHasSendCard(cardMessage.ThanksHasSend{
+			ItemSubtype: found.SubType,
+			FoundDate:   found.FoundDate,
+			ImageKey:    found.ImageKey,
+		}),
+	)
+	println("失主反馈信息发送成功！")
+}
+
+func SendUesrToBoth(FoundId uint)  {
+	db := common.GetDB()
+	var found dbModel.Found
+	var lost  dbModel.Lost
+	var user  dbModel.User
+	db.Where("id=?",FoundId).First(&found)
+	db.Where("id=?",found.MatchId).First(&lost)
+	if lost.ID == 0 || found.ID == 0 {
+		println("不存在对应Found或Lost")
+		return
+	}
+	// 若不为自己带走，Return
+	if found.CurrentPlace != "1" {
+		return
+	}
+	db.Where("open_id=?",found.FoundOpenId).First(&user)
+	cardMessage.SendCardMessage(
+		lost.LosterOpenId,
+		cardMessage.SendUser2LosterCard(cardMessage.SendUser2Loster{
+			FounderName: user.Name,
+			ItemSubtype: found.SubType,
+			FoundDate:   found.FoundDate,
+			ImageKey:    found.ImageKey,
+		}),
+	)
+	println("---------------联系方式发送给Loster成功！-------------------")
+
+	cardMessage.SendCardMessage(
+		found.FoundOpenId,
+		cardMessage.SendUser2FounderCard(cardMessage.SendUser2Founder{
+			ItemSubtype: found.SubType,
+			FoundDate:   found.FoundDate,
+			ImageKey:    found.ImageKey,
+		}),
+	)
+	println("---------------联系方式发送给Founder成功！---------------")
+	cardMessage.ImSendUser(found.FoundOpenId,lost.LosterOpenId)
+	cardMessage.ImSendUser(lost.LosterOpenId,found.FoundOpenId)
+}

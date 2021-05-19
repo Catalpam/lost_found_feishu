@@ -12,6 +12,15 @@ import (
 )
 
 func main() {
+	println("Debug: Send Thx")
+	//cardMessage.SendCardMessage(
+	//	"ou_273dbf68377bc685de3dd11c6102f879",
+	//	cardMessage.FoundClaimCard(cardMessage.FoundClaim{
+	//		ItemSubtype:  "found.SubType",
+	//		LeaveMessage: "found.LosterComment",
+	//		ImageKey:  "img_v2_db10c690-a054-4148-a3c1-bdc2a4e075cg" ,
+	//	}),
+	//)
 
 	//cardMessage.SendCardMessage(
 	//	"ou_273dbf68377bc685de3dd11c6102f879",
@@ -112,7 +121,8 @@ func CollectRoute(r *gin.Engine) *gin.Engine {
 	miniRoutes.POST("/claim", miniController.CliamFound)
 	miniRoutes.POST("/thanks", miniController.ThanksMsg)
 	miniRoutes.GET("/me", miniController.GetMeInfo)
-	miniRoutes.POST("/me", miniController.GetMeInfo)
+	miniRoutes.POST("/me", miniController.GetMeDetail)
+	miniRoutes.POST("/foundBySelf", miniController.HasFoundBySelf)
 
 
 
