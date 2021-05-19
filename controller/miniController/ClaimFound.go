@@ -11,6 +11,7 @@ import (
 
 func CliamFound(ctx *gin.Context) {
 	db := common.GetDB()
+	OpenId := ctx.MustGet("open_id").(string)
 	var found dbModel.Found
 	// 获取Form中的参数 FoundId
 	FoundIdStr := ctx.PostForm("id")
@@ -54,6 +55,14 @@ func CliamFound(ctx *gin.Context) {
 		})
 		return
 	}
+	if found.FoundOpenId == OpenId {
+		ctx.JSON(http.StatusOK, gin.H{
+			"code": 405,
+			"msg":  "这是你自己发布的Found！",
+		})
+		return
+	}
+
 
 	if errLostId != nil && LostId != 0 {
 		db.Model(&found).Update("match_id", LostId)
