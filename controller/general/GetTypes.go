@@ -1,6 +1,7 @@
 package general
 
 import (
+	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"lost_found/common"
 	"lost_found/dbModel"
@@ -9,26 +10,25 @@ import (
 
 func GetTypes(ctx *gin.Context)  {
 	db := common.GetDB()
-	var text = "[["
 	var itemTypes []dbModel.ItemType
 
 	db.Order("type_id ASC").Find(&itemTypes)
-	println(itemTypes[0].Name)
+	var typeBig []string
+	var typeSmall []typeSmallIndex
 	for _, itemType := range itemTypes{
-		text = text + "\"" + itemType.Name + "\"" + ","
+		typeBig = append(typeBig, itemType.Name)
+		var index typeSmallIndex
+		json.Unmarshal([]byte(itemType.Subtypes), &index)
+		typeSmall = append(typeSmall,index)
 	}
-	text = text + "],"
-
-	text = text + "["
-	for _, itemType := range itemTypes{
-		text = text + itemType.Subtypes +","
-	}
-	text = text + "]"
-
-	text = text + "]"
 	ctx.JSON(http.StatusOK,gin.H{
 		"code": 200,
-		"data": text,
+		"data": gin.H{
+			"type1":typeBig,
+			"type2":typeSmall,
+		},
 		"msg": "物品类型Types返回成功",
 	})
 }
+
+type typeSmallIndex []string
