@@ -15,6 +15,9 @@ func GetFoundList(ctx *gin.Context) {
 	var founds []dbModel.Found
 	// 获取Form中的参数 FoundId
 	FoundIdStr := ctx.PostForm("id")
+	if FoundIdStr == "" {
+		FoundIdStr = ctx.PostForm("found_id")
+	}
 	// 查找参数
 	if FoundIdStr != "" {
 		FoundId, err := strconv.ParseUint(ctx.PostForm("id"), 10 ,32)

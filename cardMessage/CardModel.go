@@ -18,9 +18,9 @@ type FoundClaim struct {
 func ThanksHasSendCard(cardModel ThanksHasSend) string {
 	var cardContent = "{\"a\":\"a\"}"
 	formatRawCard := "{\n\t\"config\": {\n\t\t\"wide_screen_mode\": true\n\t},\n\t\"header\": {\n\t\t\"title\": {\n\t\t\t\"tag\": \"plain_text\",\n\t\t\t\"content\": \"感谢留言已发送\"\n\t\t},\n\t\t\"template\": \"blue\"\n\t},\n\t\"elements\": [{\n\t\t\t\"tag\": \"div\",\n\t\t\t\"text\": {\n\t\t\t\t\"tag\": \"lark_md\",\n\t\t\t\t\"content\": \"您的感谢留言已发送给found发布者~\"\n\t\t\t}\n\t\t},\n\t\t{\n\t\t\t\"tag\": \"img\",\n\t\t\t\"title\": {\n\t\t\t\t\"tag\": \"lark_md\",\n\t\t\t\t\"content\": \"物品种类：%s\\n发现时间：%s\"\n\t\t\t},\n\t\t\t\"img_key\": \"%s\",\n\t\t\t\"alt\": {\n\t\t\t\t\"tag\": \"plain_text\",\n\t\t\t\t\"content\": \"图片\"\n\t\t\t}\n\t\t},\n\t\t{\n\t\t\t\"tag\": \"hr\"\n\t\t},\n\t\t{\n\t\t\t\"tag\": \"div\",\n\t\t\t\"text\": {\n\t\t\t\t\"tag\": \"lark_md\",\n\t\t\t\t\"content\": \"很开心我们的系统能够帮助您找到失物，也欢迎您给我们留言，反馈您本次使用的体验\"\n\t\t\t}\n\t\t},\n\t\t{\n\t\t\t\"tag\": \"action\",\n\t\t\t\"actions\": [{\n\t\t\t\t\"tag\": \"button\",\n\t\t\t\t\"text\": {\n\t\t\t\t\t\"tag\": \"plain_text\",\n\t\t\t\t\t\"content\": \"提交反馈\"\n\t\t\t\t},\n\t\t\t\t%s\n\t\t\t\t\"type\": \"primary\"\n\t\t\t}]\n\t\t}\n\t]\n}"
-	println(formatRawCard)
+	//println(formatRawCard)
 	cardContent = fmt.Sprintf(formatRawCard, cardModel.ItemSubtype, cardModel.FoundDate, cardModel.ImageKey, Str2MultiUrl(FeedbackUrl.HasSendThanks))
-	println(cardContent)
+	//println(cardContent)
 	return cardContent
 }
 
@@ -48,9 +48,9 @@ type SendUser2Founder struct {
 func SendUser2LosterCard(cardModel SendUser2Loster) string {
 	var cardContent = "{\"a\":\"a\"}"
 	formatRawCard := "{\n\t\"config\": {\n\t\t\"wide_screen_mode\": true\n\t},\n\t\"header\": {\n\t\t\"title\": {\n\t\t\t\"tag\": \"plain_text\",\n\t\t\t\"content\": \"您已认领招领消息，请联系拾物者\"\n\t\t},\n\t\t\"template\": \"green\"\n\t},\n\t\"elements\": [{\n\t\t\t\"tag\": \"div\",\n\t\t\t\"text\": {\n\t\t\t\t\"tag\": \"lark_md\",\n\t\t\t\t\"content\": \"您的物品目前由%s保管，您可以通过以下名片与TA联系。\"\n\t\t\t}\n\t\t},\n\t\t{\n\t\t\t\"tag\": \"img\",\n\t\t\t\"title\": {\n\t\t\t\t\"tag\": \"lark_md\",\n\t\t\t\t\"content\": \"物品种类：%s\\n发现时间：%s\"\n\t\t\t},\n\t\t\t\"img_key\": \"%s\",\n\t\t\t\"alt\": {\n\t\t\t\t\"tag\": \"plain_text\",\n\t\t\t\t\"content\": \"图片\"\n\t\t\t}\n\t\t},\n\t\t{\n\t\t\t\"tag\": \"hr\"\n\t\t},\n\t\t{\n\t\t\t\"tag\": \"div\",\n\t\t\t\"text\": {\n\t\t\t\t\"tag\": \"lark_md\",\n\t\t\t\t\"content\": \"很开心我们的系统能够帮助您找到失物，也欢迎您给我们留言，反馈您本次使用的体验~\"\n\t\t\t}\n\t\t},\n\t\t{\n\t\t\t\"tag\": \"action\",\n\t\t\t\"actions\": [{\n\t\t\t\t\"tag\": \"button\",\n\t\t\t\t\"text\": {\n\t\t\t\t\t\"tag\": \"plain_text\",\n\t\t\t\t\t\"content\": \"提交反馈\"\n\t\t\t\t},\n\t\t\t\t%s \n\t\t\t\t\"type\": \"primary\"\n\t\t\t}]\n\t\t}\n\t]\n}"
-	println(formatRawCard)
+	//println(formatRawCard)
 	cardContent = fmt.Sprintf(formatRawCard, cardModel.FounderName, cardModel.ItemSubtype, cardModel.FoundDate, cardModel.ImageKey, Str2MultiUrl(FeedbackUrl.HasSendThanks))
-	println(cardContent)
+	//println(cardContent)
 	return cardContent
 }
 
@@ -64,18 +64,18 @@ type SendUser2Loster struct {
 func RevokeLostCard() string {
 	var cardContent = "{\"a\":\"a\"}"
 	formatRawCard := "{\n\t\"config\": {\n\t\t\"wide_screen_mode\": true\n\t},\n\t\"elements\": [{\n\t\t\t\"tag\": \"div\",\n\t\t\t\"text\": {\n\t\t\t\t\"tag\": \"lark_md\",\n\t\t\t\t\"content\": \"很抱歉未能帮您解决问题，若您对本次使用体验感到不满，可以点击反馈按钮进行吐槽\"\n\t\t\t}\n\t\t},\n\t\t{\n\t\t\t\"tag\": \"action\",\n\t\t\t\"actions\": [{\n\t\t\t\t\"tag\": \"button\",\n\t\t\t\t\"text\": {\n\t\t\t\t\t\"tag\": \"plain_text\",\n\t\t\t\t\t\"content\": \"提交反馈\"\n\t\t\t\t},\n\t\t\t\t%s\n\t\t\t\t\"type\": \"primary\"\n\t\t\t}]\n\t\t}\n\t]\n}"
-	println(formatRawCard)
+	//println(formatRawCard)
 	cardContent = fmt.Sprintf(formatRawCard, Str2MultiUrl(FeedbackUrl.HasSendThanks))
-	println(cardContent)
+	//println(cardContent)
 	return cardContent
 }
 
 func ReSurveyCard(cardmodel ReSurvey) string {
 	var cardContent = ""
 	formatRawCard := rawSurveyCard
-	println(formatRawCard)
+	//println(formatRawCard)
 	cardContent = fmt.Sprintf(formatRawCard, cardmodel.ItemSubtype,cardmodel.FoundDate, cardmodel.ImageKey,ReSurveyButton(cardmodel.LostId))
-	println(cardContent)
+	//println(cardContent)
 	return cardContent
 }
 type ReSurvey struct {
@@ -88,9 +88,9 @@ type ReSurvey struct {
 func SuspectedCard(cardmodel Suspected) string {
 	var cardContent = ""
 	formatRawCard := rawSuspectedCard
-	println(formatRawCard)
+	//println(formatRawCard)
 	cardContent = fmt.Sprintf(formatRawCard, cardmodel.ItemSubtype,cardmodel.FoundPlace,cardmodel.FoundDate, cardmodel.ImageKey,SuspectedButton(cardmodel.FoundId,cardmodel.FoundId))
-	println(cardContent)
+	//println(cardContent)
 	return cardContent
 }
 type Suspected struct {
@@ -104,9 +104,9 @@ type Suspected struct {
 func LostAddedCard(cardmodel LostAdded) string {
 	var cardContent = ""
 	formatRawCard := rawLostAddedCard
-	println(formatRawCard)
+	//println(formatRawCard)
 	cardContent = fmt.Sprintf(formatRawCard, cardmodel.ItemSubtype,cardmodel.LostDate, cardmodel.LostPlace,LostAddedButton(cardmodel.LostId))
-	println(cardContent)
+	//println(cardContent)
 	return cardContent
 }
 type LostAdded struct {
@@ -115,6 +115,21 @@ type LostAdded struct {
 	LostDate    string
 	LostPlace 	string
 }
+
+func SameNameCard(cardmodel SameName) string {
+	var cardContent = ""
+	formatRawCard := rawSameNameCard
+	//println(formatRawCard)
+	cardContent = fmt.Sprintf(formatRawCard,cardmodel.FoundPlace,cardmodel.ImageKey,SameNameUrlButton(cardmodel.FoundId))
+	//println(cardContent)
+	return cardContent
+}
+type SameName struct {
+	FoundId 	uint
+	FoundPlace string
+	ImageKey    string
+}
+
 
 
 

@@ -13,6 +13,9 @@ func CheckNewFoundIsMatchedLost (newFoundId uint) {
 	var losts []dbModel.Lost
 	fmt.Printf("开始匹配，FoundId为：%d\n",newFoundId)
 	db.Where("id=?",newFoundId).First(&found)
+	if found.LosterInfo != "" {
+		go SelectLosterName(found)
+	}
 	if found.ID == 0 {
 		panic("Error：新的Found没有找到！")
 	}
@@ -157,4 +160,23 @@ func SendUesrToBoth(FoundId uint)  {
 	println("---------------联系方式发送给Founder成功！---------------")
 	cardMessage.ImSendUser(found.FoundOpenId,lost.LosterOpenId)
 	cardMessage.ImSendUser(lost.LosterOpenId,found.FoundOpenId)
+}
+
+func SelectLosterName(found dbModel.Found) {
+	fmt.Printf("--------开始通过姓名查找。姓名为：%s----------",found.LosterInfo)
+	db := common.GetDB()
+	var user dbModel.User
+	db.Where("name=?",found.LosterInfo).First(&user)
+	if user.ID == 0 {
+		fmt.Printf("--------姓名为%s的用户不存在----------",found.LosterInfo)
+		return
+	}
+	cardMessage.SendCardMessage(
+		user.OpenId,
+		cardMessage.SameNameCard(cardMessage.SameName{
+			FoundId:    found.ID,
+			FoundPlace: found.SubPlace,
+			ImageKey:   found.ImageKey,
+		}),
+	)
 }

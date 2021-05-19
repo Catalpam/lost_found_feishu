@@ -111,14 +111,14 @@ func messageWebhook (body []byte) error{
 		return err
 	}
 	if content.Event.MsgType == "image" {
-		cardMessage.SendMessage(content.Event.OpenId, "坏耶，图片有些小问题:" + content.Event.Text)
-		cardMessage.SendImage(content.Event.OpenId, content.Event.ImageKey)
+		cardMessage.SendMessage(content.Event.OpenId, "好的，我们已经收到您的图片反馈，更多问题请打开服务台。")
+		//cardMessage.SendImage(content.Event.OpenId, content.Event.ImageKey)
 	}
 	if content.Event.MsgType == "text" {
-		cardMessage.SendMessage(content.Event.OpenId, "好耶，Your Msg is:" + content.Event.Text)
+		cardMessage.SendMessage(content.Event.OpenId, "好的，我们已经收到您的消息，更多问题请打开服务台。" )
 	}
 	if content.Event.MsgType == "audio" {
-		cardMessage.SendMessage(content.Event.OpenId, "阿哦，相信机器人，大家是不会听语音的")
+		cardMessage.SendMessage(content.Event.OpenId, "对不起，现在我还听不懂语音哦～请输入文字")
 	}
 	return nil
 }

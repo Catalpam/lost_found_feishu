@@ -40,15 +40,19 @@ func ButtonHandler(value map[string]interface{}, openId string) {
 		println("-------------收到ButtonSurvey回调！--------------------")
 		buttonValue := value["buttonValue"].(map[string]interface{})
 		IsTrue := buttonValue["IsTrue"].(string)
-		//var LostId := buttonValue["LostId"]
+		LostIdStr := buttonValue["LostId"].(string)
+		LostId, _ := strconv.ParseUint(LostIdStr, 10, 32)
 		if IsTrue == "T" {
 			println("-------------按下了\"是\"按钮！--------------------")
-			cardMessage.SendMessage(openId,"好的，我们将撤销您的lost查询信息，恭喜您找到了您的失物。")
+			comander.HasFounded(LostId)
+			cardMessage.SendMessage(openId,"好的，我们将不再为您查询该lost信息，恭喜您找到了您的失物。")
 		} else if IsTrue == "F" {
 			println("-------------按下了\"否\"按钮！--------------------")
 			cardMessage.SendMessage(openId,"好的，我们将为您继续查询。")
 		} else if IsTrue == "Revoke" {
 			println("-------------按下了\"撤销\"按钮！--------------------")
+			// 这里要改一下
+			comander.HasFounded(LostId)
 			cardMessage.SendCardMessage(openId, cardMessage.RevokeLostCard())
 		}
 	case ButtonCardType.Suspected:
@@ -56,7 +60,7 @@ func ButtonHandler(value map[string]interface{}, openId string) {
 		IsTrue := buttonValue["IsTrue"].(string)
 		//var LostId := buttonValue["LostId"]
 		if IsTrue == "T" {
-			//调试用，这里要修改的
+			//调试用，这里是Url，是永不会被调用的
 			cardMessage.SendMessage(openId,"很开心能帮助您查找到您的物品，单击下方按钮跳转至小程序查看领取方式吧。")
 		} else if IsTrue == "F" {
 			//调试用，这里要修改的

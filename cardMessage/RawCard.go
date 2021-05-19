@@ -116,3 +116,43 @@ const rawLostAddedCard = `
   ]
 }
 `
+
+const rawSameNameCard = `
+{
+  "config": {
+    "wide_screen_mode": true
+  },
+  "elements": [
+    {
+      "tag": "div",
+      "text": {
+        "tag": "lark_md",
+        "content": "有人拾到了含有您姓名的物品，详细信息如下"
+      }
+    },
+    {
+      "tag": "hr"
+    },
+    {
+      "tag": "img",
+      "title": {
+        "tag": "lark_md",
+        "content": "拾取地点：%s"
+      },
+      "img_key": "%s",
+      "alt": {
+        "tag": "plain_text",
+        "content": "图片"
+      }
+    },
+    {
+      "tag": "div",
+      "text": {
+        "tag": "lark_md",
+        "content": "若该物品为您遗失的物品，您可以点击以下按钮获取链接，进行领取，若并非您的物品，请忽略本消息。"
+      },
+	%s
+    }
+  ]
+}
+`
