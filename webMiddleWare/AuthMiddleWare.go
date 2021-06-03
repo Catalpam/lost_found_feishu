@@ -1,4 +1,4 @@
-package miniMiddleWare
+package webMiddleWare
 
 import (
 	"fmt"
@@ -8,27 +8,27 @@ import (
 	"net/http"
 )
 
-func MiniAuthMiddleWare() gin.HandlerFunc {
+func WebAuthMiddleWare() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		sessionKey, cookieErr := ctx.Cookie("miniAuth")
+		sessionKey, cookieErr := ctx.Cookie("webAuth")
 		if cookieErr != nil {
 			ctx.JSON(http.StatusUnauthorized, gin.H{
 				"code": 4003,
 				"data": "",
-				"msg":  "权限不足,还未登录，请调用tt.login登录",
+				"msg":  "权限不足,还未登录",
 			})
 			ctx.Abort()
 			return
 		}
 		// get from Redis
-		openId, err := common.RedisClient.Get("feishu_user:" + sessionKey).Result()
+		openId, err := common.RedisClient.Get("lost_found_web:" + sessionKey).Result()
 
 		// 判断SessionKey是否存在
-		if err == redis.Nil {
+		if err == redis.Nil || openId == ""{
 			ctx.JSON(http.StatusUnauthorized, gin.H{
 				"code": 4003,
 				"data": "",
-				"msg":  "权限不足,Cookie不合法，请调用tt.login登录",
+				"msg":  "权限不足,请重新登录",
 			})
 			ctx.Abort()
 			return
@@ -37,9 +37,6 @@ func MiniAuthMiddleWare() gin.HandlerFunc {
 			panic(err)
 		}
 		ctx.Set("open_id", openId)
-
-		fmt.Println("读取成功,用户的Open_Id值为：", openId)
-		println("SessionKey读取成功！")
-		println("----------open_id成功写入至上下文中--------------")
+		fmt.Println("Web认证成功,用户的Open_Id值为：", openId)
 	}
 }

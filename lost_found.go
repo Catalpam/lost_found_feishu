@@ -9,6 +9,7 @@ import (
 	"lost_found/controller/webController"
 	"lost_found/handler"
 	"lost_found/miniMiddleWare"
+	"lost_found/webMiddleWare"
 )
 
 func main() {
@@ -124,17 +125,17 @@ func CollectRoute(r *gin.Engine) *gin.Engine {
 	miniRoutes.POST("/foundBySelf", miniController.HasFoundBySelf)
 
 
-
-
-
 	//后台管理Web登录
 	r.GET("/weblogin", webController.Login302)
 	r.GET("/webcode", webController.SetCookies)
 	//后台管理Web路由组
-	webRoutes := r.Group("/web")
-	//webRoutes.Use(middleware.AuthMiddleware())
-	webRoutes.POST("/userinfo", controller.GetUserInfo)
-	webRoutes.POST("/addfound", miniController.AddFound)
+	webRoutes := r.Group("/management")
+	//使用Auth中间件进行认证
+	webRoutes.Use(webMiddleWare.WebAuthMiddleWare())
+	webRoutes.GET("/found", webController.GetFounds)
+	webRoutes.GET("/lost", webController.GetLosts)
+	webRoutes.GET("/match", webController.GetMatches)
+
 
 	return r
 }
