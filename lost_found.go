@@ -132,9 +132,18 @@ func CollectRoute(r *gin.Engine) *gin.Engine {
 	webRoutes := r.Group("/management")
 	//使用Auth中间件进行认证
 	webRoutes.Use(webMiddleWare.WebAuthMiddleWare())
+
+	// 招领管理
 	webRoutes.GET("/found", webController.GetFounds)
+	webRoutes.DELETE("/found", webController.DelFound)
 	webRoutes.GET("/lost", webController.GetLosts)
+	webRoutes.DELETE("/lost", webController.DelLost)
 	webRoutes.GET("/match", webController.GetMatches)
+	// 地点管理
+	webRoutes.GET("/place", webController.GetPlaces)
+	webRoutes.DELETE("/place", webController.DelPlace)
+	webRoutes.DELETE("/subplace", webController.DelSubPlace)
+
 
 
 	return r

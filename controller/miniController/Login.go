@@ -29,7 +29,7 @@ func SetCookies(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, gin.H{
 			"code": 4001,
 			"data": "",
-			"msg":  "Code不匹配！!",
+			"msg":  "您还未登录，请重启飞书或小程序!",
 		})
 		return
 	}
@@ -40,7 +40,7 @@ func SetCookies(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, gin.H{
 			"code": 4002,
 			"data": "",
-			"msg":  "没有找到您的用户信息！!",
+			"msg":  "您不在可用性名单内，请联系管理员将您添加至可用性名单内，否则无法使用!",
 		})
 		return
 	}

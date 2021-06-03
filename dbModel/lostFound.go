@@ -7,6 +7,7 @@ import (
 type Found struct {
 	//gorm Model
 	ID uint `gorm:"primary_key"`
+	Validity bool `gorm:"default:true;not null"`
 	// 发现时间
 	CreatedAt time.Time
 	// Match时间
@@ -51,6 +52,7 @@ type Found struct {
 type Lost struct {
 	//gorm Model
 	ID        uint `gorm:"primary_key"`
+	Validity bool `gorm:"default:true;not null"`
 	CreatedAt time.Time
 	// Match时间
 	UpdatedAt time.Time

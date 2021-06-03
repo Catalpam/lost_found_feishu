@@ -23,7 +23,7 @@ func DelFound(ctx *gin.Context)  {
 	}
 	//在数据库中查找Found对象
 	if FoundId != 0 {
-		db.Where("id=?",FoundId).Order("found_date ASC").Find(&found)
+		db.Where("id=?",FoundId).Find(&found)
 		if found.ID == 0 {
 			ctx.JSON(http.StatusOK, gin.H{
 				"code": 413,
@@ -31,6 +31,13 @@ func DelFound(ctx *gin.Context)  {
 			})
 			return
 		}
+	}
+	if found.Validity == false {
+		ctx.JSON(http.StatusOK, gin.H{
+			"code": 413,
+			"msg":  "该Found已失效，请勿重复操作！",
+		})
+		return
 	}
 	// 将其变为失效：
 	db.Model(&found).Update("validity",false)
@@ -55,7 +62,7 @@ func DelLost(ctx *gin.Context)  {
 	}
 	//在数据库中查找Found对象
 	if LostId != 0 {
-		db.Where("id=?",LostId).Order("found_date ASC").Find(&lost)
+		db.Where("id=?",LostId).Find(&lost)
 		if lost.ID == 0 {
 			ctx.JSON(http.StatusOK, gin.H{
 				"code": 413,
@@ -66,6 +73,13 @@ func DelLost(ctx *gin.Context)  {
 	}
 	// 将其变为失效：
 	db.Model(&lost).Update("validity",false)
+	if lost.Validity == false {
+		ctx.JSON(http.StatusOK, gin.H{
+			"code": 413,
+			"msg":  "该Lost已失效，请勿重复操作！",
+		})
+		return
+	}
 	ctx.JSON(http.StatusOK, gin.H{
 		"code": 200,
 		"msg":  "成功将该Lost变为失效！",

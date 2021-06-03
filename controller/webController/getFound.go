@@ -29,6 +29,7 @@ func returnFounds(founds *[]dbModel.Found, ctx *gin.Context)  {
 		db.Where("open_id=?",value.FoundOpenId).First(&user)
 		tempFound := FoundListModel{
 			ID:        				value.ID,
+			Validity:				value.Validity,
 			Name:            		user.Name,
 			Student_Teacher_Id:     user.StudentId,
 			Moblie:          		user.Mobile,
@@ -55,6 +56,7 @@ func returnFounds(founds *[]dbModel.Found, ctx *gin.Context)  {
 
 type FoundListModel struct {
 	ID uint
+	Validity bool
 	SubType string
 	// User
 	Name string
