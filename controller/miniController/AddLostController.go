@@ -1,38 +1,22 @@
 package miniController
 
 import (
-	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"lost_found/cardMessage"
 	"lost_found/common"
 	"lost_found/dbModel"
 	"net/http"
 	"strconv"
-	"strings"
 )
 
 func AddLost(ctx *gin.Context) {
-	db := common.GetDB()
-
 	//获取参数
-	typeIndex, _ := ctx.GetPostForm("type_index")
 	campusId, _ := ctx.GetPostForm("campus_id")
-	place1, _ := ctx.GetPostForm("place_1")
-	place2, _ := ctx.GetPostForm("place_2")
-	place3, _ := ctx.GetPostForm("place_3")
 	LostDate := ctx.PostForm("lost_date")
 	timeSession, _ := ctx.GetPostForm("time_session")
 
 	//检查有无空参数
 	{
-		if typeIndex == "" {
-			ctx.JSON(http.StatusOK, gin.H{
-				"code": 413,
-				"data": "",
-				"msg":  "缺少找到物品的类型：type_index",
-			})
-			return
-		}
 		if campusId == "" {
 			ctx.JSON(http.StatusOK, gin.H{
 				"code": 413,
@@ -63,137 +47,141 @@ func AddLost(ctx *gin.Context) {
 		}
 	}
 
-	var PlaceCom1 string = ""
-	var PlaceCom2 string = ""
-	var PlaceCom3 string = ""
-
-	//查找地理位置是否合法
-	var placeCnt int
-	var placeHasErr = false
-	if place1 == "" {
-		placeCnt = 0
-	} else if place2 == "" {
-		placeCnt = 1
-		PlaceComByte1, _ := json.Marshal(CheckPlace(place1, campusId, &placeHasErr))
-		PlaceCom1 = string(PlaceComByte1)
-
-	} else if place3 == "" {
-		placeCnt = 2
-		PlaceComByte1, _ := json.Marshal(CheckPlace(place1, campusId, &placeHasErr))
-		PlaceComByte2, _ := json.Marshal(CheckPlace(place2, campusId, &placeHasErr))
-		PlaceCom1 = string(PlaceComByte1)
-		PlaceCom2 = string(PlaceComByte2)
-		if place1 == place2 {
-			ctx.JSON(http.StatusOK, gin.H{
-				"code": 414,
-				"data": "",
-				"msg":  "Place有重复!",
-			})
-			return
-		}
-	} else {
-		placeCnt = 3
-		PlaceComByte1, _ := json.Marshal(CheckPlace(place1, campusId, &placeHasErr))
-		PlaceComByte2, _ := json.Marshal(CheckPlace(place2, campusId, &placeHasErr))
-		PlaceComByte3, _ := json.Marshal(CheckPlace(place3, campusId, &placeHasErr))
-		PlaceCom1 = string(PlaceComByte1)
-		PlaceCom2 = string(PlaceComByte2)
-		PlaceCom3 = string(PlaceComByte3)
-		if place1 == place2 || place1 == place3 || place2 == place3 {
-			ctx.JSON(http.StatusOK, gin.H{
-				"code": 414,
-				"data": "",
-				"msg":  "Place有重复!",
-			})
-			return
-		}
-	}
-	if placeCnt == 0 || placeHasErr == true {
+	db := common.GetDB()
+	var has2 = false
+	var has3 = false
+	if ctx.PostForm("place_1") == "" {
 		ctx.JSON(http.StatusOK, gin.H{
 			"code": 415,
 			"data": "",
-			"msg":  "Place参数格式不合法!",
+			"msg":  "Place不合法!",
+		})
+		return
+	}
+	if ctx.PostForm("place_2") != "" {
+		has2 = true
+	}
+	if ctx.PostForm("place_3") != "" {
+		has3 = true
+	}
+
+	placeIndex1, _ := String2Index(ctx.PostForm("place_1"))
+	placeIndex2, _ := String2Index(ctx.PostForm("place_2"))
+	placeIndex3, _ := String2Index(ctx.PostForm("place_3"))
+	//查找index对应的值是否存在于数据库中
+	var typeBig   dbModel.TypeBig
+	var typeSmall dbModel.TypeSmall
+	typeIndex ,errType := String2Index(ctx.PostForm("type_index"))
+	if errType == nil {
+		db.Where("indexx=?", typeIndex[0]).First(&typeBig)
+		db.Where("indexx=? AND big_id=?", typeIndex[1], typeBig.ID).First(&typeSmall)
+	} else  {
+		ctx.JSON(http.StatusOK, gin.H{
+			"code": 415,
+			"data": "",
+			"msg":  "物品类型格式不合法!",
 		})
 		return
 	}
 
-	//查找TypeId对应的类型属性是是否存在于数据库中
-	index1 := ""
-	index2 := ""
-	str_arr := strings.Split(typeIndex, `,`)
-	str0 := strings.Split(str_arr[0], `[`)
-	str1 := strings.Split(str_arr[1], `]`)
-	for _, str := range str0 {
-		index1 = index1 + str
-	}
-	for _, str := range str1 {
-		index2 = index2 + str
-	}
-	id_2, err2 := strconv.Atoi(index2)
-	if err2 != nil {
-		ctx.JSON(http.StatusOK, gin.H{
-			"code": 413,
-			"data": "",
-			"msg":  "参数格式不合法!",
-		})
-		return
-	}
-	var itemType dbModel.ItemType
-	SubTypeName := ""
-	db.Where("type_id = ?", index1).First(&itemType)
-	var subtypes []string
-	_ = json.Unmarshal([]byte(itemType.Subtypes), &subtypes)
-	println("--------------" + subtypes[0] + "----------------------")
-	if id_2 > (len(subtypes) - 1) {
+	if typeSmall.ID == 0 {
 		ctx.JSON(http.StatusOK, gin.H{
 			"code": 413,
 			"data": "",
 			"msg":  "请求的type_index不存在!",
 		})
 		return
-	} else {
-		SubTypeName = subtypes[id_2]
 	}
 
-	var campus dbModel.Campus
-	db.Where("campus_id=?", campusId).First(&campus)
+	var placeSmallIds = [3]uint{0,0,0}
+	var placeSmallNames = [3]string{"","",""}
+	var placeBig   dbModel.PlaceBig
+	var placeSmall dbModel.PlaceSmall
+	db.Where("indexx=? AND campus_id=?", placeIndex1[0],campusId).Last(&placeBig)
+	db.Where("indexx=? AND big_id=?", placeIndex1[1], placeBig.ID).First(&placeSmall)
+	placeSmallIds[0] 	= placeSmall.ID
+	placeSmallNames[0]  = placeSmall.Name
+	db.Where("indexx=? AND campus_id=?", placeIndex2[0],campusId).First(&placeBig)
+	db.Where("indexx=? AND big_id=?",    placeIndex2[1], placeBig.ID).First(&placeSmall)
+	placeSmallIds[1] 	= placeSmall.ID
+	placeSmallNames[1]  = placeSmall.Name
+	db.Where("indexx=? AND campus_id=?", placeIndex3[0],campusId).First(&placeBig)
+	db.Where("indexx=? AND big_id=?", placeIndex3[1], placeBig.ID).First(&placeSmall)
+	placeSmallIds[2]    = placeSmall.ID
+	placeSmallNames[2]  = placeSmall.Name
+
 
 	//获取用户OpenId
 	OpenId := ctx.MustGet("open_id").(string)
-	//将新的Found对象添加至数据库中
-	newLost := dbModel.Lost{
-		LosterOpenId:    OpenId,
-		TypeSubName:     SubTypeName,
-		LostPlace1:      PlaceCom1,
-		LostPlace2:      PlaceCom2,
-		LostPlace3:      PlaceCom3,
-		LostDate:        LostDate,
-		LostTimeSession: timeSession,
+	var user dbModel.User
+	db.Where("open_id=?",OpenId).First(&user)
+
+	//将新的Lost对象添加至数据库中
+	var newLost dbModel.Lost
+	if has2 == true && has3 == true {
+		newLost = dbModel.Lost{
+			Validity:      true,
+			IsFoundBySelf: false,
+			OpenId:        OpenId,
+			Name:          user.Name,
+			MatchId:       0,
+			TypeBigId:     typeSmall.BigId,
+			TypeSmallId:   typeSmall.ID,
+			PlaceSmallId1: placeSmallIds[0],
+			PlaceSmallId2: placeSmallIds[1],
+			PlaceSmallId3: placeSmallIds[2],
+			Date:          LostDate,
+			TimeSession:   Time2Session(),
+		}
+	} else if has2 == true && has3 == false {
+		newLost = dbModel.Lost{
+			Validity:      true,
+			IsFoundBySelf: false,
+			OpenId:        OpenId,
+			Name:          user.Name,
+			MatchId:       0,
+			TypeBigId:     typeSmall.BigId,
+			TypeSmallId:   typeSmall.ID,
+			PlaceSmallId1: placeSmallIds[0],
+			PlaceSmallId2: placeSmallIds[1],
+			Date:          LostDate,
+			TimeSession:   Time2Session(),
+		}
+	} else if has2 == false && has3 == false {
+		newLost = dbModel.Lost{
+			Validity:      true,
+			IsFoundBySelf: false,
+			OpenId:        OpenId,
+			Name:          user.Name,
+			MatchId:       0,
+			TypeBigId:     typeSmall.BigId,
+			TypeSmallId:   typeSmall.ID,
+			PlaceSmallId1: placeSmallIds[0],
+			Date:          LostDate,
+			TimeSession:   Time2Session(),
+		}
+	} else {
+		ctx.JSON(http.StatusOK, gin.H{
+			"code": 415,
+			"data": "",
+			"msg":  "请按顺序将地点1,地点2,地点3填写!",
+		})
+		return
 	}
 	db.Create(&newLost)
 	ctx.JSON(http.StatusOK, gin.H{
 		"code": 200,
-		"data": newLost,
+		"data": gin.H{
+			"lost": newLost,
+			"type":typeBig.Name+" "+typeSmall.Name,
+			"place": placeSmallNames,
+		},
 		"msg":  "添加Lost成功，之后有疑似您的Found被建立后，我们将在第一时间通知您！",
 	})
 
-
 	// 消息卡片：
-	var temPlaceStr []string
-	_ = json.Unmarshal([]byte(newLost.LostPlace1), &temPlaceStr)
-	sendPlaceStr := temPlaceStr[1]
-	if newLost.LostPlace2 != "" {
-		var temPlaceStr []string
-		_ = json.Unmarshal([]byte(newLost.LostPlace2), &temPlaceStr)
-		sendPlaceStr = sendPlaceStr + "," + temPlaceStr[1]
-	}
-	if newLost.LostPlace3 != "" {
-		var temPlaceStr []string
-		_ = json.Unmarshal([]byte(newLost.LostPlace3), &temPlaceStr)
-		sendPlaceStr = sendPlaceStr + "," + temPlaceStr[1]
-	}
 	timeSessionInChinese := ""
-	switch newLost.LostTimeSession {
+	switch newLost.TimeSession {
 	case "morning": timeSessionInChinese = "上午（6：00-11：00）"
 	case "noon": timeSessionInChinese = "中午（11：00-2：00）"
 	case "afternoon": timeSessionInChinese = "下午（2：00-19：00）"
@@ -204,43 +192,9 @@ func AddLost(ctx *gin.Context) {
 		OpenId,
 		cardMessage.LostAddedCard(cardMessage.LostAdded{
 			LostId: 	strconv.Itoa(int(newLost.ID)),
-			ItemSubtype: newLost.TypeSubName,
-			LostDate:    newLost.LostDate +" "+timeSessionInChinese,
-			LostPlace:   sendPlaceStr,
+			ItemSubtype: typeBig.Name+" "+typeSmall.Name,
+			LostDate:    newLost.Date +" "+timeSessionInChinese,
+			LostPlace:   placeSmallNames[0]+" "+placeSmallNames[1]+" "+placeSmallNames[2],
 		}),
 	)
-}
-
-//获取Place信息
-func CheckPlace(placeIndex string, campusId string, hasErr *bool) []string {
-	db := common.GetDB()
-	index1 := ""
-	index2 := ""
-	str_arr2 := strings.Split(placeIndex, `,`)
-	str0 := strings.Split(str_arr2[0], `[`)
-	str1 := strings.Split(str_arr2[1], `]`)
-	for _, str := range str0 {
-		index1 = index1 + str
-	}
-	println("--------------" + "index1:" + index1 + "----------------------")
-	for _, str := range str1 {
-		index2 = index2 + str
-	}
-	println("--------------" + "index2:" + index2 + "----------------------")
-	id_2, err2 := strconv.Atoi(index2)
-	if err2 != nil {
-		*hasErr = true
-		return []string{"", ""}
-	}
-	var place dbModel.Place
-	db.Where("place_id =? AND campus_id=?", index1, campusId).First(&place)
-	var subareas []string
-	_ = json.Unmarshal([]byte(place.Subareas), &subareas)
-	println("--------------" + "断点！！！" + "----------------------")
-	if id_2 > (len(subareas) - 1) {
-		*hasErr = true
-		return []string{"", ""}
-	} else {
-		return []string{place.Name, subareas[id_2]}
-	}
 }

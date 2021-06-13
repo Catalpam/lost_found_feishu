@@ -14,7 +14,7 @@ func InitDB() *gorm.DB{
 	driverName := "mysql"
 	host := "localhost"
 	port := "3306"
-	database := "feishu_lost_found"
+	database := "lost_found"
 	username := "root"
 	password := "zhzhzhzh"
 	charset := "utf8"
@@ -35,11 +35,15 @@ func InitDB() *gorm.DB{
 		panic("fail to connect database, err: " + err.Error())
 	}
 	db.AutoMigrate(&dbModel.User{})
-	db.AutoMigrate(&dbModel.Campus{})
-	db.AutoMigrate(&dbModel.Place{})
-	db.AutoMigrate(&dbModel.ItemType{})
+	db.AutoMigrate(&dbModel.TypeSmall{})
+	db.AutoMigrate(&dbModel.TypeBig{})
+	db.AutoMigrate(&dbModel.PlaceSmall{})
+	db.AutoMigrate(&dbModel.PlaceBig{})
 	db.AutoMigrate(&dbModel.Found{})
 	db.AutoMigrate(&dbModel.Lost{})
+	db.AutoMigrate(&dbModel.Match{})
+	db.AutoMigrate(&dbModel.Privilege{})
+	println("数据库加载完成")
 
 	DB = db
 	return db
@@ -47,4 +51,29 @@ func InitDB() *gorm.DB{
 
 func GetDB() *gorm.DB {
 	return DB
+}
+
+
+func TypeId2Name(id uint) string  {
+	db := GetDB()
+	var typeSmall dbModel.TypeSmall
+	db.Where("id=?",id).First(&typeSmall)
+	println(typeSmall.ID)
+	println(typeSmall.Name)
+
+	return typeSmall.BigName+" "+typeSmall.Name
+}
+
+func PlaceId2Name(id uint) string  {
+	db := GetDB()
+	var placeSmall dbModel.PlaceSmall
+	println(id)
+	db.Where("id=?",id).Find(&placeSmall)
+	println(placeSmall.ID)
+	println(placeSmall.Name)
+	if placeSmall.ID == 0 {
+		return ""
+	} else {
+		return placeSmall.BigName+" "+placeSmall.Name
+	}
 }

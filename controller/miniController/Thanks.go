@@ -1,29 +1,29 @@
 package miniController
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"lost_found/comander"
 	"lost_found/common"
 	"lost_found/dbModel"
 	"net/http"
-	"strconv"
 )
 
 func ThanksMsg(ctx *gin.Context) {
 	db := common.GetDB()
-	var found dbModel.Found
-	var lost  dbModel.Lost
+	var match dbModel.Match
 	// 获取Form中的参数 FoundId
-	FoundIdStr := ctx.PostForm("id")
-	if FoundIdStr == "" {
-		FoundIdStr = ctx.PostForm("found_id")
+	MatchIdStr := ctx.PostForm("id")
+	if MatchIdStr == "" {
+		MatchIdStr = ctx.PostForm("found_id")
 	}
 	ThanksMsg := ctx.PostForm("thxmsg")
 	//获取用户OpenId
 	OpenId := ctx.MustGet("open_id").(string)
 
 	// 查找参数
-	if FoundIdStr == "" {
+	if MatchIdStr == "" {
+		fmt.Printf("\t\t\t\"code\": 413,\n\t\t\t\"data\": \"\",\n\t\t\t\"msg\":  \"缺少参数id或found_id！\",\n")
 		ctx.JSON(http.StatusOK, gin.H{
 			"code": 413,
 			"data": "",
@@ -33,43 +33,30 @@ func ThanksMsg(ctx *gin.Context) {
 	}
 	// 查找参数
 	if ThanksMsg == "" {
+		fmt.Printf("\t\t\t\"code\": 413,\n\t\t\t\"data\": \"\",\n\t\t\t\"msg\":  \"诶嘿，你还没有填入感谢的话哦！\",\n")
 		ctx.JSON(http.StatusOK, gin.H{
 			"code": 413,
 			"data": "",
-			"msg":  "缺少参数thxmsg！",
+			"msg":  "诶嘿，你还没有填入感谢的话哦！",
+		})
+		return
+	}
+	var found dbModel.Found
+	db.Where("id=?",MatchIdStr).First(&found)
+	db.Where("id=?", found.MatchId).First(&match)
+
+	if match.LosterOpenId != OpenId{
+		fmt.Printf("\t\t\t\"code\": 413,\n\t\t\t\"data\": match.TypeName,\n\t\t\t\"msg\":  \"这件物品好像不是你认领的-哦！\",\n")
+		ctx.JSON(http.StatusOK, gin.H{
+			"code": 413,
+			"data": match.TypeName,
+			"msg":  "这件物品好像不是你认领的-哦！",
 		})
 		return
 	}
 
-	FoundId, err := strconv.ParseUint(FoundIdStr, 10, 32)
-	if err != nil {
-		ctx.JSON(http.StatusOK, gin.H{
-			"code": 413,
-			"data": err,
-			"msg":  "id不合法！",
-		})
-		return
-	}
-	db.Where("id=?", FoundId).First(&found)
-	if found.MatchId == 0 {
-		ctx.JSON(http.StatusOK, gin.H{
-			"code": 400,
-			"data": "",
-			"msg":  "Found还未被被认领！",
-		})
-		return
-	}
-	// 查找对应的Lost
-	db.Where("id=?", found.MatchId).First(&lost)
-	if lost.LosterOpenId != OpenId {
-		ctx.JSON(http.StatusOK, gin.H{
-			"code": 403,
-			"msg":  "该Found不是被你认领！",
-		})
-		return
-	}
-
-	if found.LosterComment != "" {
+	if match.LosterComment != "" {
+		fmt.Printf("\t\t\t\"code\": 400,\n\t\t\t\"data\": \"\",\n\t\t\t\"msg\":  \"你已经表达过感谢了！\",\n")
 		ctx.JSON(http.StatusOK, gin.H{
 			"code": 400,
 			"data": "",
@@ -78,11 +65,11 @@ func ThanksMsg(ctx *gin.Context) {
 		return
 	}
 
-	db.Model(&found).Update("loster_comment", ThanksMsg)
-	go comander.SendThx(found.ID)
+	db.Model(&match).Update("loster_comment", ThanksMsg)
+	go comander.SendThx(match.ID)
 	ctx.JSON(http.StatusOK, gin.H{
 		"code": 200,
-		"data":found.LosterComment,
+		"data":	match.LosterComment,
 		"msg":  "感谢信息上传成功",
 	})
 	return

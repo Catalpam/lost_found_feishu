@@ -16,7 +16,7 @@ func SuspectedButton(lostId uint,foundId uint) string {
 	// Let's start with a base url
 
 	baseUrlStr := "https://applink.feishu.cn/client/mini_program/open?appId=cli_a00d67c8e5f8500c&mode=window&path="
-	indexUrl,err := url.Parse("pages/index")
+	indexUrl,err := url.Parse("pages/index/index")
 	if err != nil {
 		fmt.Println("Malformed URL: ", err.Error())
 		print("\nIndexUrl编码严重错误：")

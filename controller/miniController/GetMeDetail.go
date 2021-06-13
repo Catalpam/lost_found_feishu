@@ -1,20 +1,25 @@
 package miniController
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"lost_found/common"
+	"lost_found/controller/general"
 	"lost_found/dbModel"
 	"net/http"
 	"strconv"
-	 "strings"
 )
 
 func GetMeDetail(ctx *gin.Context) {
 	// 获取Form中的参数 FoundId LostId
 	FoundIdStr := ctx.PostForm("FoundId")
 	LostIdStr := ctx.PostForm("LostId")
+	MatchIdStr := ctx.PostForm("MatchId")
+
 
 	// 查找参数
+	fmt.Println("foundId:"+FoundIdStr)
+	fmt.Println("lost ID"+LostIdStr)
 	if FoundIdStr != "" {
 		FoundId, err := strconv.ParseUint(FoundIdStr, 10, 32)
 		if err != nil {
@@ -35,6 +40,16 @@ func GetMeDetail(ctx *gin.Context) {
 			})
 		}
 		returnMeLost(uint(LostId),ctx)
+	} else if MatchIdStr != ""{
+		MatchId, err := strconv.ParseUint(MatchIdStr, 10 ,32)
+		if err != nil {
+			ctx.JSON(http.StatusOK, gin.H{
+				"code": 413,
+				"data": err,
+				"msg":  "LostId格式不合法！",
+			})
+		}
+		returnMeMatch(uint(MatchId),ctx)
 	} else {
 		ctx.JSON(http.StatusOK, gin.H{
 			"code": 413,
@@ -47,6 +62,10 @@ func GetMeDetail(ctx *gin.Context) {
 func returnMeFound(FoundId uint, ctx *gin.Context)  {
 	db := common.GetDB()
 	var found dbModel.Found
+	var placeSmall dbModel.PlaceSmall
+	var typeSmall  dbModel.TypeSmall
+	var match dbModel.Match
+	var tempFound  MyFoundDetail
 	db.Where("id=?",FoundId).First(&found)
 	if found.ID == 0{
 		ctx.JSON(http.StatusOK, gin.H{
@@ -62,19 +81,39 @@ func returnMeFound(FoundId uint, ctx *gin.Context)  {
 	} else {
 		isMatched = true
 	}
-	tempFound := MyFoundDetail{
-		ID:             found.ID,
-		IsMatched:      isMatched,
-		SubType:        found.SubType,
-		FoundDate:      found.FoundDate,
-		FoundTime:      found.FoundTime,
-		Campus:         found.Campus,
-		Place:          found.Place + "-" + found.SubPlace,
-		PlaceDetail:    found.PlaceDetail,
-		Image:          found.ImageHome,
-		ItemInfo:       found.ItemInfo,
-		AdditionalInfo: found.AdditionalInfo,
-		LosterComment:  found.LosterComment,
+	db.Where("id=?",found.PlaceSmallId).First(&placeSmall)
+	db.Where("id=?",found.TypeSmallId).First(&typeSmall)
+	if isMatched == true {
+		db.Where("id=?",found.MatchId).First(&match)
+		tempFound = MyFoundDetail{
+			ID:             found.ID,
+			IsMatched:      isMatched,
+			SubType:        typeSmall.BigName+" "+typeSmall.Name,
+			FoundDate:      found.Date,
+			FoundTime:      found.Time,
+			Campus:         dbModel.CampusId2Str(placeSmall.CampusId),
+			Place:          placeSmall.BigName + "-" + placeSmall.Name,
+			PlaceDetail:    found.PlaceDetail,
+			Image:          found.Image,
+			ItemInfo:       found.ItemInfo,
+			AdditionalInfo: found.AdditionalInfo,
+			LosterComment:  match.LosterComment,
+		}
+	} else {
+		tempFound = MyFoundDetail{
+			ID:             found.ID,
+			IsMatched:      isMatched,
+			SubType:        typeSmall.BigName+" "+typeSmall.Name,
+			FoundDate:      found.Date,
+			FoundTime:      found.Time,
+			Campus:         dbModel.CampusId2Str(placeSmall.CampusId),
+			Place:          placeSmall.BigName + "-" + placeSmall.Name,
+			PlaceDetail:    found.PlaceDetail,
+			Image:          found.Image,
+			ItemInfo:       found.ItemInfo,
+			AdditionalInfo: found.AdditionalInfo,
+			LosterComment:  "还没有失主认领哦～～",
+		}
 	}
 	ctx.JSON(http.StatusOK, gin.H{
 		"code": 200,
@@ -85,31 +124,27 @@ func returnMeFound(FoundId uint, ctx *gin.Context)  {
 
 func returnMeLost(LostId uint, ctx *gin.Context)  {
 	db := common.GetDB()
-	var found dbModel.Found
 	var lost  dbModel.Lost
 	db.Where("id=?",LostId).First(&lost)
-	if lost.MatchId == 0{
-		lostPlaceStr1 := strings.Replace(lost.LostPlace1,"[\"","",-1)
-		lostPlaceStr1 = strings.Replace(lostPlaceStr1,"\"]","",-1)
-		lostPlaceStr1 = strings.Replace(lostPlaceStr1,"\",\"","-",-1)
-
-		lostPlaceStr2 := strings.Replace(lost.LostPlace2,"[\"","",-1)
-		lostPlaceStr2 = strings.Replace(lostPlaceStr2,"\"]","",-1)
-		lostPlaceStr2 = strings.Replace(lostPlaceStr2,"\",\"","-",-1)
-
-		lostPlaceStr3 := strings.Replace(lost.LostPlace3,"[\"","",-1)
-		lostPlaceStr3 = strings.Replace(lostPlaceStr3,"\"]","",-1)
-		lostPlaceStr3 = strings.Replace(lostPlaceStr3,"\",\"","-",-1)
+	if lost.ID == 0 {
+		ctx.JSON(http.StatusOK, gin.H{
+			"code": 403,
+			"data": nil,
+			"msg":  "没有找到对应的信息！",
+		})
+		return
+	}
+	if lost.MatchId == 0 && lost.IsFoundBySelf == false{
 		tempLost := MyLostFalseDetail{
 			ID:              lost.ID,
 			IsMatched:       false,
-			LosterOpenId:    lost.LosterOpenId,
-			TypeSubName:     lost.TypeSubName,
-			LostPlace1:      lostPlaceStr1,
-			LostPlace2:      lostPlaceStr2,
-			LostPlace3:      lostPlaceStr3,
-			LostDate:        lost.LostDate,
-			LostTimeSession: lost.LostTimeSession,
+			LosterOpenId:    lost.OpenId,
+			TypeSubName:     common.TypeId2Name(lost.TypeSmallId),
+			LostPlace1:      general.PlaceId2Name(lost.PlaceSmallId1),
+			LostPlace2:      general.PlaceId2Name(lost.PlaceSmallId2),
+			LostPlace3:      general.PlaceId2Name(lost.PlaceSmallId3),
+			LostDate:        lost.Date,
+			LostTimeSession: lost.TimeSession,
 		}
 		ctx.JSON(http.StatusOK, gin.H{
 			"code": 200,
@@ -118,42 +153,25 @@ func returnMeLost(LostId uint, ctx *gin.Context)  {
 		})
 		return
 	}
-	if lost.MatchId == 4294967294 {
-		tempFound := MyLostTrueDetail{
-			ID:             lost.ID,
-			IsMatched:      true,
-			SubType:        lost.TypeSubName,
-			FoundDate:      lost.LostDate,
-			FoundTime:      lost.LostTimeSession,
-			Campus:         "",
-			Place:          "自行找到",
-			PlaceDetail:    "自行找到",
-			Image:          "https://www.fengzigeng.com/api/image?name=7d016e6add66f758c225c0454653797f.png",
-			ItemInfo:       "",
-			AdditionalInfo: "",
-			LosterComment:  "",
-		}
-		ctx.JSON(http.StatusOK, gin.H{
-			"code": 200,
-			"data": tempFound,
-			"msg":  "获取自行找到的Lost Detail成功",
-		})
-		return
-	}
-	db.Where("id=?",lost.MatchId).First(&found)
+}
+
+func returnMeMatch(matchId uint, ctx *gin.Context)  {
+	db := common.GetDB()
+	var match dbModel.Match
+	db.Where("id=?",matchId).First(&match)
 	tempFound := MyLostTrueDetail{
-		ID:             lost.ID,
+		ID:             match.ID,
 		IsMatched:      true,
-		SubType:        found.SubType,
-		FoundDate:      found.FoundDate,
-		FoundTime:      found.FoundTime,
-		Campus:         found.Campus,
-		Place:          found.Place + "-" + found.SubPlace,
-		PlaceDetail:    found.PlaceDetail,
-		Image:          found.ImageHome,
-		ItemInfo:       found.ItemInfo,
-		AdditionalInfo: found.AdditionalInfo,
-		LosterComment:  found.LosterComment,
+		SubType:        common.TypeId2Name(match.TypeSmallId),
+		FoundDate:      match.FoundDate,
+		FoundTime:      match.Time,
+		Campus:         match.Campus,
+		Place:          general.PlaceId2Name(match.PlaceSmallId),
+		PlaceDetail:    match.PlaceDetail,
+		Image:          match.Image,
+		ItemInfo:       match.ItemInfo,
+		AdditionalInfo: match.AdditionalInfo,
+		LosterComment:  match.LosterComment,
 	}
 	ctx.JSON(http.StatusOK, gin.H{
 		"code": 200,
@@ -161,7 +179,6 @@ func returnMeLost(LostId uint, ctx *gin.Context)  {
 		"msg":  "获取已找到的Lost Detail成功",
 	})
 }
-
 
 type MyFoundDetail struct {
 	ID      uint

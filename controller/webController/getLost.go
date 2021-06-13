@@ -1,9 +1,9 @@
 package webController
 
 import (
-	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"lost_found/common"
+	"lost_found/controller/general"
 	"lost_found/dbModel"
 	"net/http"
 )
@@ -17,6 +17,7 @@ func GetLosts(ctx *gin.Context) {
 
 func returnLosts(losts *[]dbModel.Lost, ctx *gin.Context)  {
 	db := common.GetDB()
+	var user dbModel.User
 	if len(*losts) == 0{
 		ctx.JSON(http.StatusOK, gin.H{
 			"code": 200,
@@ -27,26 +28,23 @@ func returnLosts(losts *[]dbModel.Lost, ctx *gin.Context)  {
 	}
 	var LostList []LostListModel
 	for _, value := range *losts {
-		var place1 []string
-		json.Unmarshal([]byte(value.LostPlace1), &place1)
-		var place2 []string
-		json.Unmarshal([]byte(value.LostPlace1), &place2)
-		var place3 []string
-		json.Unmarshal([]byte(value.LostPlace1), &place3)
-        var user dbModel.User
-		db.Where("open_id=?",value.LosterOpenId).First(&user)
+		var placeSmall dbModel.PlaceSmall
+		db.Where("id=?",value.PlaceSmallId1).First(&placeSmall)
+
+		db.Where("open_id=?",value.OpenId).First(&user)
 		temp := LostListModel{
-			ID:              		value.ID,
-			Name:            		user.Name,
-			Student_Teacher_Id:     user.StudentId,
-			Moblie:          		user.Mobile,
-			Avatar:          		user.Avatar,
-			SubType:         		value.TypeSubName,
-			Place1:          		place1[0] + "-" + place1[1],
-			Place2:          		place2[0] + "-" + place2[1],
-			Place3:          		place3[0] + "-" + place3[1],
-			LostDate:        		value.LostDate,
-			LostTimeSession: 		value.LostTimeSession,
+			ID:                 value.ID,
+			Name:               user.Name,
+			Student_Teacher_Id: user.StudentId,
+			Moblie:             user.Mobile,
+			Avatar:             user.Avatar,
+			Campus:             dbModel.CampusId2Str(placeSmall.CampusId),
+			SubType:            common.TypeId2Name(value.TypeSmallId),
+			Place1:             general.PlaceId2Name(value.PlaceSmallId1),
+			Place2:             general.PlaceId2Name(value.PlaceSmallId1),
+			Place3:             general.PlaceId2Name(value.PlaceSmallId1),
+			LostDate:           value.Date,
+			LostTimeSession:    common.TimeSessionToChinese(value.TimeSession),
 		}
 		LostList = append(LostList, temp)
 	}
@@ -64,6 +62,7 @@ type LostListModel struct {
 	Student_Teacher_Id string
 	Moblie string
 	Avatar string
+	Campus string
 	// SubType
 	SubType string
 	// Location
@@ -78,16 +77,15 @@ type LostListModel struct {
 func SelectLost(losts *[]dbModel.Lost, ctx *gin.Context)  {
 	db := common.GetDB()
 	//获取参数
-	subtype 	:= ctx.Query("subtype")
-	openId 	:= ctx.Query("openid")
-	date 		:= ctx.Query("date")
-	timeSession := ctx.Query("time_session")
+	//subtype 	:= ctx.Query("subtype")
+	//openId 	:= ctx.Query("openid")
+	//date 		:= ctx.Query("date")
+	//timeSession := ctx.Query("time_session")
 	//查找数据库
 	db.Where(&dbModel.Lost{
-		LosterOpenId:    openId,
-		TypeSubName:     subtype,
-		LostDate:        date,
-		LostTimeSession: timeSession,
-	}).Where("match_id=?",0).Order("lost_date ASC").Find(&losts)
+		//LosterOpenId:    openId,
+		//TypeSubName:     subtype,
+		//LostDate:        date,
+		//LostTimeSession: timeSession,
+	}).Where("match_id=?",0).Order("date ASC").Find(&losts)
 }
-

@@ -1,7 +1,6 @@
 package miniController
 
 import (
-	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"lost_found/common"
 	"lost_found/dbModel"
@@ -31,55 +30,11 @@ func GetFoundList(ctx *gin.Context) {
 		println(FoundId)
 		db.Where("id=?",FoundId).Find(&founds)
 	} else {
-		SelectFound(&founds,ctx)
-	}
-	returnFounds(&founds,ctx)
-}
-
-func Get_Found(ctx *gin.Context) {
-	db := common.GetDB()
-	var founds []dbModel.Found
-
-	typeIndex,_ := ctx.GetPostForm("type_index")
-	//placeIndex,_ := ctx.GetPostForm("place_index")
-	//timeSession,_ := ctx.GetPostForm("time_session")
-
-	//获取物品大类
-	//获取物品小类
-	//获取校区
-	//获取丢失地点大类
-	//获取丢失地点小类
-	//获取时段
-
-	//没有输入TypeId时的返回
-	if typeIndex == "" {
-		db.Find(&founds)
-	} else {
-		//查找TypeId对应的类型属性存在于数据库中
-		TypeId:= ""
-		str_arr :=  strings.Split(typeIndex, `,`)
-		str0 := strings.Split(str_arr[0], `{`)
-		str1 := strings.Split(str_arr[1], `}`)
-		for _, str := range str0 {
-			TypeId = TypeId + str
+		if ctx.PostForm("type_index") == "" && ctx.PostForm("place_index") == ""{
+			db.Where("match_id=?",0).Find(&founds)
+		} else {
+			SelectFound(&founds,ctx)
 		}
-		for _, str := range str1 {
-			TypeId = TypeId + str
-		}
-		println(TypeId)
-		var thing dbModel.Type
-		db.Where("type_id = ?", TypeId).Order("type_id ASC").First(&thing)
-		if thing.ID == 0{
-			ctx.JSON(http.StatusOK, gin.H{
-				"code": 413,
-				"data": TypeId,
-				"msg":  "参数不合法，type_id不存在",
-			})
-			return
-		}
-		println("----------------thing.Type获取成功！---------------------")
-		println(thing.Type)
-		db.Where("type_name = ?", thing.Type).Find(&founds)
 	}
 	returnFounds(&founds,ctx)
 }
@@ -90,23 +45,28 @@ func returnFounds(founds *[]dbModel.Found, ctx *gin.Context)  {
 		ctx.JSON(http.StatusOK, gin.H{
 			"code": 200,
 			"data":"[]",
-			"msg":  "没有查询到符合条件的Founds",
+			"msg":  "Ops,没有查询到符合条件的Founds",
 		})
 		return
 	}
+	var db = common.GetDB()
 	var FoundList []FoundListModel
 	for _, value := range *founds {
+		var placeSmall dbModel.PlaceSmall
+		var typeSmall  dbModel.TypeSmall
+		db.Where("id=?",value.PlaceSmallId).First(&placeSmall)
+		db.Where("id=?",value.TypeSmallId).First(&typeSmall)
+
 		tempFound := FoundListModel{
 			ID:        			value.ID,
-			SubType:   			value.SubType,
-			Campus:    			value.Campus,
-			Place:     			value.Place+"-"+value.SubPlace,
+			SubType:   			typeSmall.BigName+" "+typeSmall.Name,
+			Campus:    			dbModel.CampusId2Str(placeSmall.CampusId),
+			Place:     			placeSmall.BigName+"-"+placeSmall.Name,
 			PlaceDetail: 		value.PlaceDetail,
-			Image:	   			value.ImageHome,
-			ImageList: 			value.Image,
-			FoundDate: 		 	value.FoundDate,
-			FoundTime: 		 	value.FoundTime,
-			Info: 		 	value.ItemInfo,
+			Image:	   			value.Image,
+			FoundDate: 		 	value.Date,
+			FoundTime: 		 	value.Time,
+			Info: 		 		value.ItemInfo,
 			AdditionalInfo : 	value.AdditionalInfo,
 		}
 		FoundList = append(FoundList, tempFound)
@@ -135,118 +95,69 @@ type FoundListModel struct {
 	AdditionalInfo string
 }
 
-func SelectFound(founds *[]dbModel.Found, ctx *gin.Context)  {
+func SelectFound(founds *[]dbModel.Found, ctx *gin.Context) {
 	db := common.GetDB()
 	//获取参数
-	typeIndex,_ := ctx.GetPostForm("type_index")
-	campus_id, _ := ctx.GetPostForm("campus_id")
-	placeIndex, _ := ctx.GetPostForm("place_index")
-	date, _ := ctx.GetPostForm("date")
-	timeSession := ctx.PostForm("time_session")
-
-
-	//初始化参数
-	SubTypeName  := ""
-	subPlace := ""
-
-	//查找TypeId对应的类型属性是是否存在于数据库中
-	if typeIndex != "" {
-		index1 := ""
-		index2 := ""
-		str_arr := strings.Split(typeIndex, `,`)
-		str0 := strings.Split(str_arr[0], `[`)
-		str1 := strings.Split(str_arr[1], `]`)
-		for _, str := range str0 {
-			index1 = index1 + str
-		}
-		for _, str := range str1 {
-			index2 = index2 + str
-		}
-		id_2, err2 := strconv.Atoi(index2)
-		if err2 != nil {
-			ctx.JSON(http.StatusOK, gin.H{
-				"code": 413,
-				"data": "",
-				"msg":  "参数格式不合法!",
-			})
-			return
-		}
-		var itemType dbModel.ItemType
-		db.Where("type_id = ?", index1).First(&itemType)
-		var subtypes []string
-		_ = json.Unmarshal([]byte(itemType.Subtypes), &subtypes)
-		println("--------------" + subtypes[0] + "----------------------")
-		if id_2 > (len(subtypes) - 1) {
-			ctx.JSON(http.StatusOK, gin.H{
-				"code": 413,
-				"data": "",
-				"msg":  "请求的type_index不存在!",
-			})
-			return
-		} else {
-			SubTypeName = subtypes[id_2]
-		}
+	campusId, _ := ctx.GetPostForm("campus_id")
+	//date, _ := ctx.GetPostForm("date")
+	typeIndex := [2]uint{0, 0}
+	placeIndex := [2]uint{0, 0}
+	var errType, errPlace error
+	typeIndex, errType = String2Index(ctx.PostForm("type_index"))
+	placeIndex, errPlace = String2Index(ctx.PostForm("place"))
+	println(placeIndex[1])
+	//查找index对应的值是否存在于数据库中
+	var typeBig   = dbModel.TypeBig{ID: 0}
+	var typeSmall = dbModel.TypeSmall{ID: 0}
+	if errType == nil {
+		db.Where("indexx=?", typeIndex[0]).First(&typeBig)
+		db.Where("indexx=? AND big_id=?", typeIndex[1], typeBig.ID).First(&typeSmall)
 	}
-	if campus_id == "" && placeIndex != "" {
+
+	var placeBig   = dbModel.PlaceBig{ID: 0}
+	var placeSmall = dbModel.PlaceSmall{ID: 0}
+	if errPlace == nil && campusId != ""{
+		db.Where("indexx=? AND campus_id=?", placeIndex[0], campusId).First(&placeBig)
+		db.Where("indexx=? AND big_id=?", placeIndex[1], typeBig.ID).First(&placeSmall)
+	} else if errPlace == nil && campusId == "" {
 		ctx.JSON(http.StatusOK, gin.H{
 			"code": 413,
 			"data": "",
-			"msg":  "请求带place_index时请带上campus_id!",
+			"msg":  "啊哦，没有填写校区哦!",
 		})
-		return
-	}
-	if campus_id != "" && placeIndex != "" {
-		//获取place信息
-		index1 := ""
-		index2 := ""
-		str_arr2 := strings.Split(placeIndex, `,`)
-		str0 := strings.Split(str_arr2[0], `[`)
-		str1 := strings.Split(str_arr2[1], `]`)
-		for _, str := range str0 {
-			index1 = index1 + str
-		}
-		println("--------------" + "index1:"+ index1 + "----------------------")
-		for _, str := range str1 {
-			index2 = index2 + str
-		}
-		println("--------------" + "index2:"+ index2 + "----------------------")
-		id_2, err2 := strconv.Atoi(index2)
-		if err2 != nil {
-			ctx.JSON(http.StatusOK, gin.H{
-				"code": 413,
-				"data": "",
-				"msg":  "请求的place_index不合法!",
-			})
-			return
-		}
-		var place dbModel.Place
-		db.Where("place_id =? AND campus_id=?", index1,campus_id).First(&place)
-		var subareas []string
-		_ = json.Unmarshal([]byte(place.Subareas), &subareas)
-		println("--------------" + "断点！！！" + "----------------------")
-		if id_2 > (len(subareas) - 1) {
-			ctx.JSON(http.StatusOK, gin.H{
-				"code": 413,
-				"data": "",
-				"msg":  "请求的校区中place_index不存在!",
-			})
-			return
-		} else {
-			subPlace = subareas[id_2]
-		}
+	} else if errPlace != nil && campusId != "" {
+		db.Where("campus_id=?", campusId).First(&placeBig)
+		db.Where("indexx=? AND big_id=?", placeIndex[1], typeBig.ID).First(&placeSmall)
 	}
 
-	var campus dbModel.Campus
-	db.Where("campus_id=?",campus_id).First(&campus)
-	println("----------------准备开始查找符合条件的----------------------")
+	println(placeSmall.Indexx)
+	println(placeSmall.Name)
+
 	//在数据库中查找Found对象
-	//match_id=0
-	println(campus.Name)
+	println("----------------准备开始查找符合条件的Found----------------------")
 	db.Where(&dbModel.Found{
-		SubType:            SubTypeName,
-		Campus:             campus.Name,
-		SubPlace:           subPlace,
-		FoundDate:          date,
-		FoundTimeSession:   timeSession,
+		TypeSmallId:   typeSmall.ID,
+		PlaceSmallId:  placeSmall.ID,
+		//Date:          date,
 	}).Where("match_id=?",0).Find(&founds)
+}
+
+func String2Index(str string) ([2]uint,error){
+	countSplit := strings.Split(str, ",")
+	var index [2]uint
+	var index64 [2]uint64
+	var err error
+	index64[0],err = strconv.ParseUint(countSplit[0], 10, 32)
+	if err != nil {
+		println(err)
+		return [2]uint{0,0}, err
+	}
+	index64[1],err = strconv.ParseUint(countSplit[1], 10, 32)
+	if err != nil {
+		println(err)
+		return [2]uint{0,0}, err
+	}
+	index[0] = uint(index64[0])
+	index[1] = uint(index64[1])
+	return index, nil
 }

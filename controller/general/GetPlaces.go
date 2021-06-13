@@ -1,7 +1,6 @@
 package general
 
 import (
-	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"lost_found/common"
 	"lost_found/dbModel"
@@ -10,50 +9,79 @@ import (
 
 func GetPlaces(ctx *gin.Context) {
 	campusId := ctx.PostForm("campus_id")
-	if campusId == "" {
-		ctx.JSON(http.StatusOK, gin.H{
-			"code": 413,
-			"data": "",
-			"msg":  "campus_id为空！",
-		})
-	}
 	db := common.GetDB()
-	var place []dbModel.Place
-	db.Where("campus_id = ?", campusId).Order("place_id ASC").Find(&place)
-	println(place[0].Name)
-	var placeBig []string
-	var placeSmall []placeSmallIndex
-	for _, itemClass := range place {
-		placeBig = append(placeBig, itemClass.Name)
-		var index placeSmallIndex
-		json.Unmarshal([]byte(itemClass.Subareas), &index)
-		placeSmall = append(placeSmall,index)
+	var placeBig []dbModel.PlaceBig
+
+	db.Where("campus_id = ?", campusId).Order("indexx asc").Find(&placeBig)
+
+	var placeBigs []string
+	var placeSmalls []placeSmallIndex
+	for _, value := range placeBig {
+		var placeSmall 	[]dbModel.PlaceSmall
+		var placeSmallSingle placeSmallIndex
+		db.Where("big_id=?",value.ID).Order("indexx asc").Find(&placeSmall)
+		for _, subValue := range placeSmall {
+
+			placeSmallSingle = append(placeSmallSingle,subValue.Name)
+		}
+		if placeSmallSingle != nil {
+			placeBigs = append(placeBigs, value.Name)
+			placeSmalls = append(placeSmalls,placeSmallSingle)
+		}
 	}
 	ctx.JSON(http.StatusOK, gin.H{
 		"code": 200,
 		"data": gin.H{
-			"place1": placeBig,
-			"place2":placeSmall,
+			"place1": placeBigs,
+			"place2": placeSmalls,
 		},
 		"msg":  "Places返回成功",
 	})
 }
 
-func GetCampus(ctx *gin.Context) {
+type placeSmallIndex []string
+
+func GetTypes(ctx *gin.Context)  {
 	db := common.GetDB()
-	var text = "["
-	var campuses []dbModel.Campus
-	db.Order("campus_id ASC").Find(&campuses)
-	println(campuses[0].Name)
-	for _, campus := range campuses {
-		text = text + `"` + campus.Name + `"` + ","
+	var typeBig	 	[]dbModel.TypeBig
+	var typeBigs 	[]string
+
+	db.Order("indexx").Find(&typeBig)
+
+	var typeSmalls []typeSmallIndex
+	for _, value := range typeBig {
+		var typeSmall 	[]dbModel.TypeSmall
+		var smallSingle typeSmallIndex
+		db.Where("big_id=?",value.ID).Order("indexx").Find(&typeSmall)
+		for _, subValue := range typeSmall {
+			smallSingle = append(smallSingle,subValue.Name)
+		}
+		if smallSingle != nil {
+			typeBigs = append(typeBigs, value.Name)
+			typeSmalls = append(typeSmalls,smallSingle)
+		}
 	}
-	text = text + "]"
-	ctx.JSON(http.StatusOK, gin.H{
+
+	ctx.JSON(http.StatusOK,gin.H{
 		"code": 200,
-		"data": json.RawMessage(text),
-		"msg":  "Campus返回成功",
+		"data": gin.H{
+			"type1":typeBigs,
+			"type2":typeSmalls,
+		},
+		"msg": "物品类型Types返回成功",
 	})
 }
 
-type placeSmallIndex []string
+type typeSmallIndex []string
+
+func PlaceId2Name(id uint) string  {
+	db := common.GetDB()
+	var placeSmall dbModel.PlaceSmall
+	println(id)
+	db.Where("id=?",id).First(&placeSmall)
+	if placeSmall.ID == 0 {
+		return ""
+	} else {
+		return placeSmall.BigName+" "+placeSmall.Name
+	}
+}

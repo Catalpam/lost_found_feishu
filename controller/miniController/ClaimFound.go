@@ -55,7 +55,7 @@ func CliamFound(ctx *gin.Context) {
 		})
 		return
 	}
-	if found.FoundOpenId == OpenId {
+	if found.OpenId == OpenId {
 		ctx.JSON(http.StatusOK, gin.H{
 			"code": 405,
 			"msg":  "这是你自己发布的Found！",
@@ -64,48 +64,67 @@ func CliamFound(ctx *gin.Context) {
 	}
 
 
-	if errLostId != nil && LostId != 0 {
-		db.Model(&found).Update("match_id", LostId)
-	} else {
-		newLost := dbModel.Lost{
-			LosterOpenId:    ctx.MustGet("open_id").(string),
-			TypeSubName:     found.SubType,
-			LostPlace1:      "[\"" + found.Place + "\",\"" + found.SubPlace + "\"]",
-			LostDate:        found.FoundDate,
-			LostTimeSession: found.FoundTimeSession,
-			MatchId:         found.ID,
-		}
-		db.Create(&newLost)
-		println("----------newLost.ID----------------")
-		println(newLost.ID)
-		db.Model(&found).Update("match_id", newLost.ID)
-	}
-	// 若为自己带走，给两边发送信息
-	if found.CurrentPlace == "1" {
-		go comander.SendUesrToBoth(found.ID)
-	}
-	// 给小程序返回详情
-	returnFoundDeatil(&found, ctx)
-}
+	var typeSmall	dbModel.TypeSmall
+	var placeSmall 	dbModel.PlaceSmall
+	db.Where("id=?",found.TypeSmallId).First(&typeSmall)
+	db.Where("id=?",found.PlaceSmallId).First(&placeSmall)
 
-func returnFoundDeatil(found *dbModel.Found, ctx *gin.Context) {
-
-	FoundDetail := FoundDetailModel{
-		ID:                 found.ID,
-		SubType:            found.SubType,
-		Campus:             found.Campus,
-		Place:              found.Place,
-		Image:              found.ImageHome,
-		FoundDate:          found.FoundDate,
-		FoundTime:          found.FoundTime,
+	newMatch := dbModel.Match{
+		FoundDate:    found.Date,
+		Time:         found.Time,
+		TimeSession:  found.TimeSession,
+		LosterOpenId: OpenId,
+		FoundOpenId:  found.OpenId,
+		TypeBigId:    found.TypeBigId,
+		TypeSmallId:  found.TypeSmallId,
+		TypeName:     typeSmall.BigName+" "+typeSmall.Name,
+		PlaceBigId:   found.PlaceBigId,
+		PlaceSmallId: found.PlaceSmallId,
+		PlaceName:    placeSmall.BigName+" "+placeSmall.Name,
 		ItemInfo:           found.ItemInfo,
+		Image:              found.Image,
+		ImageKey:           found.ImageKey,
+		PlaceDetail:        found.PlaceDetail,
 		CurrentPlace:       found.CurrentPlace,
 		CurrentPlaceDetail: found.CurrentPlaceDetail,
-		AdditionalInfo:		found.AdditionalInfo,
+		LosterInfo:         found.LosterInfo,
+		AdditionalInfo:     found.AdditionalInfo,
+	}
+	db.Create(&newMatch)
+	println("----------newMatch.ID----------------")
+	println(newMatch.ID)
+
+	if errLostId != nil && LostId != 0 {
+		db.Model(&dbModel.Lost{}).Where("id=?",LostId).Update("match_id", newMatch.ID)
+	}
+
+	db.Model(&found).Update("match_id", newMatch.ID)
+	// 若为自己带走，给两边发送信息
+	if found.CurrentPlace == "1" {
+		go comander.SendUesrToBoth(newMatch.ID)
+	}
+	// 给小程序返回详情
+	returnMatchDeatil(&newMatch, ctx)
+}
+
+func returnMatchDeatil(match *dbModel.Match, ctx *gin.Context) {
+
+	MatchDetail := FoundDetailModel{
+		ID:                 match.ID,
+		SubType:            match.TypeName,
+		Campus:             match.Campus,
+		Place:              match.PlaceName,
+		Image:              match.Image,
+		FoundDate:          match.FoundDate,
+		FoundTime:          match.Time,
+		ItemInfo:           match.ItemInfo,
+		CurrentPlace:       match.CurrentPlace,
+		CurrentPlaceDetail: match.CurrentPlaceDetail,
+		AdditionalInfo:     match.AdditionalInfo,
 	}
 	ctx.JSON(http.StatusOK, gin.H{
 		"code": 200,
-		"data": FoundDetail,
+		"data": MatchDetail,
 		"msg":  "认领成功！",
 	})
 	return

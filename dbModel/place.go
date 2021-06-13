@@ -1,15 +1,27 @@
 package dbModel
 
-type Campus struct {
-	ID uint `gorm:"primary_key"`
+type PlaceSmall struct {
+	ID       uint `gorm:"primary_key"`
+	Indexx   uint
+	Name     string `gorm:"type:varchar(100);not null"`
+	BigId    uint
+	BigName  string `gorm:"type:varchar(100);not null"`
 	CampusId string `gorm:"type:varchar(10);not null"`
-	Name string `gorm:"type:varchar(200);not null"`
 }
 
-type Place struct {
+type PlaceBig struct {
 	ID       uint `gorm:"primary_key"`
+	Indexx   uint
+	Name     string `gorm:"type:varchar(100);not null"`
 	CampusId string `gorm:"type:varchar(10);not null"`
-	PlaceId string `gorm:"type:varchar(10);not null"`
-	Name     string `gorm:"type:varchar(200);not null"`
-	Subareas string `gorm:"type:varchar(300);not null"`
+}
+
+func CampusId2Str(id string) string {
+	ret := ""
+	if id == "0" {
+		ret = "清水河校区"
+	} else if id == "1" {
+		ret = "沙河校区"
+	}
+	return ret
 }

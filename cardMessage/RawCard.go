@@ -122,6 +122,13 @@ const rawSameNameCard = `
   "config": {
     "wide_screen_mode": true
   },
+  "header": {
+    "title": {
+      "tag": "plain_text",
+      "content": "同名物品推送"
+    },
+    "template": "orange"
+  },
   "elements": [
     {
       "tag": "div",

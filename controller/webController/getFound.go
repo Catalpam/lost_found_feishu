@@ -26,7 +26,9 @@ func returnFounds(founds *[]dbModel.Found, ctx *gin.Context)  {
 	var FoundList []FoundListModel
 	for _, value := range *founds {
 		var user dbModel.User
-		db.Where("open_id=?",value.FoundOpenId).First(&user)
+		var placeSmall dbModel.PlaceSmall
+		db.Where("open_id=?",value.OpenId).First(&user)
+		db.Where("id=?",value.PlaceSmallId).First(&placeSmall)
 		tempFound := FoundListModel{
 			ID:        				value.ID,
 			Validity:				value.Validity,
@@ -34,14 +36,14 @@ func returnFounds(founds *[]dbModel.Found, ctx *gin.Context)  {
 			Student_Teacher_Id:     user.StudentId,
 			Moblie:          		user.Mobile,
 			Avatar:          		user.Avatar,
-			SubType:   				value.SubType,
-			Campus:    				value.Campus,
-			Place:     				value.Place+"-"+value.SubPlace,
+			SubType:   				common.TypeId2Name(value.TypeSmallId),
+			Campus:    				dbModel.CampusId2Str(placeSmall.CampusId),
+			Place:     				placeSmall.BigName+"-"+placeSmall.Name,
 			PlaceDetail: 			value.PlaceDetail,
-			Image:	   				value.ImageHome,
+			Image:	   				value.Image,
 			ImageList: 				value.Image,
-			FoundDate: 		 		value.FoundDate,
-			FoundTime: 			 	value.FoundTime,
+			FoundDate: 		 		value.Date,
+			FoundTime: 			 	value.Time,
 			Info: 		 		    value.ItemInfo,
 			AdditionalInfo : 		value.AdditionalInfo,
 		}
@@ -80,16 +82,16 @@ type FoundListModel struct {
 func SelectFound(founds *[]dbModel.Found, ctx *gin.Context)  {
 	db := common.GetDB()
 	//获取参数
-	typeIndex 	:= ctx.Query("subtype")
-	campus 	:= ctx.Query("campus")
-	date 		:= ctx.Query("date")
-	timeSession := ctx.Query("time_session")
+	//typeIndex 	:= ctx.Query("subtype")
+	//campus 	:= ctx.Query("campus")
+	//date 		:= ctx.Query("date")
+	//timeSession := ctx.Query("time_session")
 
 	//在数据库中查找Found对象
 	db.Where(&dbModel.Found{
-		SubType:            typeIndex,
-		Campus:             campus,
-		FoundDate:          date,
-		FoundTimeSession:   timeSession,
-	}).Where("match_id=?",0).Order("found_date ASC").Find(&founds)
+		//SubType:            typeIndex,
+		//Campus:             campus,
+		//FoundDate:          date,
+		//FoundTimeSession:   timeSession,
+	}).Where("match_id=?",0).Order("date ASC").Find(&founds)
 }

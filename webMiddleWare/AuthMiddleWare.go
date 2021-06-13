@@ -5,14 +5,15 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis"
 	"lost_found/common"
-	"net/http"
 )
 
 func WebAuthMiddleWare() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		sessionKey, cookieErr := ctx.Cookie("webAuth")
+
 		if cookieErr != nil {
-			ctx.JSON(http.StatusUnauthorized, gin.H{
+			//ctx.Redirect(302, "https://www.fengzigeng.com/api/weblogin")
+			ctx.JSON(200, gin.H{
 				"code": 4003,
 				"data": "",
 				"msg":  "权限不足,还未登录",
@@ -25,11 +26,12 @@ func WebAuthMiddleWare() gin.HandlerFunc {
 
 		// 判断SessionKey是否存在
 		if err == redis.Nil || openId == ""{
-			ctx.JSON(http.StatusUnauthorized, gin.H{
+			ctx.JSON(200, gin.H{
 				"code": 4003,
 				"data": "",
 				"msg":  "权限不足,请重新登录",
 			})
+			//ctx.Redirect(302, "https://www.fengzigeng.com/api/weblogin")
 			ctx.Abort()
 			return
 		} else if err != nil {

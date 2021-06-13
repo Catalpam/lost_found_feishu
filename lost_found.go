@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"lost_found/common"
 	"lost_found/controller"
+	"lost_found/controller/admin"
 	"lost_found/controller/general"
 	"lost_found/controller/miniController"
 	"lost_found/controller/webController"
@@ -13,7 +14,7 @@ import (
 )
 
 func main() {
-	println("Debug: Send Thx")
+	//println("Debug: Send Thx")
 	//cardMessage.SendCardMessage(
 	//	"ou_273dbf68377bc685de3dd11c6102f879",
 	//	cardMessage.FoundClaimCard(cardMessage.FoundClaim{
@@ -84,12 +85,12 @@ func main() {
 	//数据库加载初始化
 	db := common.InitDB()
 	defer db.Close()
-	//更新数据库内容
-	common.ItemTypeInitial()
-	common.UpdateStudentList()
-	common.PlaceInitial()
+	////更新数据库内容
+	//common.ItemTypeInitial()
+	//common.UpdateStudentList()
+	//common.PlaceInitial()
 
-	//加载根路由组
+	////加载根路由组
 	r := gin.Default()
 	r = CollectRoute(r)
 	panic(r.Run(":1111"))
@@ -112,7 +113,6 @@ func CollectRoute(r *gin.Engine) *gin.Engine {
 	//小程序路由组
 	miniRoutes.POST("/userinfo", controller.GetUserInfo)
 	miniRoutes.POST("/gettypes", general.GetTypes)
-	miniRoutes.POST("/getcampus", general.GetCampus)
 	miniRoutes.POST("/getplaces", general.GetPlaces)
 	miniRoutes.POST("/addfound", miniController.AddFound)
 	miniRoutes.POST("/getfound", miniController.GetFoundList)
@@ -123,6 +123,13 @@ func CollectRoute(r *gin.Engine) *gin.Engine {
 	miniRoutes.GET("/me", miniController.GetMeInfo)
 	miniRoutes.POST("/me", miniController.GetMeDetail)
 	miniRoutes.POST("/foundBySelf", miniController.HasFoundBySelf)
+	miniRoutes.POST("/BulkAddFound", miniController.BulkAddFound)
+	miniRoutes.GET("/GetPermisson", miniController.GetPermisson)
+	miniRoutes.POST("/GetPermisson", miniController.GetPermisson)
+
+
+
+
 
 
 	//后台管理Web登录
@@ -133,18 +140,51 @@ func CollectRoute(r *gin.Engine) *gin.Engine {
 	//使用Auth中间件进行认证
 	webRoutes.Use(webMiddleWare.WebAuthMiddleWare())
 
+	webRoutes.GET("/me", webController.MeInfo)
 	// 招领管理
 	webRoutes.GET("/found", webController.GetFounds)
-	webRoutes.DELETE("/found", webController.DelFound)
 	webRoutes.GET("/lost", webController.GetLosts)
-	webRoutes.DELETE("/lost", webController.DelLost)
 	webRoutes.GET("/match", webController.GetMatches)
+	webRoutes.GET("/deletefound", webController.DelFound)
+	webRoutes.GET("/deletelost", webController.DelLost)
+
 	// 地点管理
 	webRoutes.GET("/place", webController.GetPlaces)
-	webRoutes.DELETE("/place", webController.DelPlace)
-	webRoutes.DELETE("/subplace", webController.DelSubPlace)
+	webRoutes.GET("/bigplace", webController.GetPlacesBig)
+
+	webRoutes.GET("/putsubplace", webController.AddSubPlace)
+	webRoutes.GET("/putplace", webController.AddPlace)
+
+	webRoutes.GET("/deletesubplace", webController.DelSubPlace)
+	webRoutes.GET("/deleteplace", webController.DelPlace)
+
+	webRoutes.GET("/editplacebig", webController.EditPlaceBig)
+	webRoutes.GET("/editplacesmall", webController.EditPlaceSmall)
 
 
+	// 类型管理
+	webRoutes.GET("/typesmall", webController.GetTypesSmall)
+	webRoutes.GET("/typebig", webController.GetTypesBig)
+
+	webRoutes.GET("/puttypesmall", webController.AddTypeSmall)
+	webRoutes.GET("/puttypebig", webController.AddTypeBig)
+
+	webRoutes.GET("/edittypebig", webController.EditTypeBig)
+	webRoutes.GET("/edittypesmall", webController.EditTypeSmall)
+
+	webRoutes.GET("/deletetypebig", webController.DelTypeBig)
+	webRoutes.GET("/deletetypesmall", webController.DelTypeSmall)
+
+	webRoutes.GET("/typeDefault", common.ItemTypeInitial)
+	webRoutes.GET("/placeDefault", common.PlaceInitial)
+
+	// 权限管理
+	webRoutes.GET("/getPlaces", admin.GetPlaces)
+	webRoutes.GET("/setPlaceAdmin", admin.SetPlaceAdmin)
+	webRoutes.GET("/setAdminPrivilage", admin.SetAdminPrivilage)
+	webRoutes.GET("/getPrivilages", admin.GetPrivilages)
+	webRoutes.GET("/searchUser", admin.SearchUser)
+	webRoutes.GET("/getAdmins", admin.GetAdmins)
 
 	return r
 }
