@@ -25,12 +25,6 @@ type AuthenService struct {
 	service *Service
 }
 
-func newAuthenService(service *Service) *AuthenService {
-	return &AuthenService{
-		service: service,
-	}
-}
-
 type AuthenAccessTokenReqCall struct {
 	ctx     *core.Context
 	authens *AuthenService
@@ -67,4 +61,45 @@ func (authens *AuthenService) UserInfo(ctx *core.Context, optFns ...request.OptF
 		authens: authens,
 		optFns:  optFns,
 	}
+}
+
+
+
+func newAuthenService(service *Service) *AuthenService {
+	return &AuthenService{
+		service: service,
+	}
+}
+
+
+type AuthenRefreshAccessTokenReqCall struct {
+	ctx     *core.Context
+	authens *AuthenService
+	body    *AuthenRefreshAccessTokenReqBody
+	optFns  []request.OptFn
+}
+
+func (rc *AuthenRefreshAccessTokenReqCall) Do() (*UserAccessTokenInfo, error) {
+	var result = &UserAccessTokenInfo{}
+	req := request.NewRequest("authen/v1/refresh_access_token", "POST",
+		[]request.AccessTokenType{request.AccessTokenTypeApp}, rc.body, result, rc.optFns...)
+	err := api.Send(rc.ctx, rc.authens.service.conf, req)
+	return result, err
+}
+
+func (authens *AuthenService) RefreshAccessToken(ctx *core.Context, body *AuthenRefreshAccessTokenReqBody, optFns ...request.OptFn) *AuthenRefreshAccessTokenReqCall {
+	return &AuthenRefreshAccessTokenReqCall{
+		ctx:     ctx,
+		authens: authens,
+		body:    body,
+		optFns:  optFns,
+	}
+}
+
+func (rc *AuthenUserInfoReqCall) Do() (*UserInfo, error) {
+	var result = &UserInfo{}
+	req := request.NewRequest("authen/v1/user_info", "GET",
+		[]request.AccessTokenType{request.AccessTokenTypeUser}, nil, result, rc.optFns...)
+	err := api.Send(rc.ctx, rc.authens.service.conf, req)
+	return result, err
 }

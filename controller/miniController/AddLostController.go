@@ -48,8 +48,6 @@ func AddLost(ctx *gin.Context) {
 	}
 
 	db := common.GetDB()
-	var has2 = false
-	var has3 = false
 	if ctx.PostForm("place_1") == "" {
 		ctx.JSON(http.StatusOK, gin.H{
 			"code": 415,
@@ -58,12 +56,15 @@ func AddLost(ctx *gin.Context) {
 		})
 		return
 	}
-	if ctx.PostForm("place_2") != "" {
-		has2 = true
+	if ctx.PostForm("place_1") == ctx.PostForm("place_2") || ctx.PostForm("place_1") == ctx.PostForm("place_3") || ctx.PostForm("place_2") == ctx.PostForm("place_3"){
+		ctx.JSON(http.StatusOK, gin.H{
+			"code": 415,
+			"data": "",
+			"msg":  "选择的位置有重复，若选择多个位置，请选择不同的位置!",
+		})
+		return
 	}
-	if ctx.PostForm("place_3") != "" {
-		has3 = true
-	}
+
 
 	placeIndex1, _ := String2Index(ctx.PostForm("place_1"))
 	placeIndex2, _ := String2Index(ctx.PostForm("place_2"))
@@ -95,20 +96,30 @@ func AddLost(ctx *gin.Context) {
 
 	var placeSmallIds = [3]uint{0,0,0}
 	var placeSmallNames = [3]string{"","",""}
-	var placeBig   dbModel.PlaceBig
-	var placeSmall dbModel.PlaceSmall
-	db.Where("indexx=? AND campus_id=?", placeIndex1[0],campusId).Last(&placeBig)
-	db.Where("indexx=? AND big_id=?", placeIndex1[1], placeBig.ID).First(&placeSmall)
-	placeSmallIds[0] 	= placeSmall.ID
-	placeSmallNames[0]  = placeSmall.Name
-	db.Where("indexx=? AND campus_id=?", placeIndex2[0],campusId).First(&placeBig)
-	db.Where("indexx=? AND big_id=?",    placeIndex2[1], placeBig.ID).First(&placeSmall)
-	placeSmallIds[1] 	= placeSmall.ID
-	placeSmallNames[1]  = placeSmall.Name
-	db.Where("indexx=? AND campus_id=?", placeIndex3[0],campusId).First(&placeBig)
-	db.Where("indexx=? AND big_id=?", placeIndex3[1], placeBig.ID).First(&placeSmall)
-	placeSmallIds[2]    = placeSmall.ID
-	placeSmallNames[2]  = placeSmall.Name
+	{
+		var placeBig dbModel.PlaceBig
+		var placeSmall dbModel.PlaceSmall
+		db.Where("indexx=? AND campus_id=?", placeIndex1[0], campusId).First(&placeBig)
+		db.Where("indexx=? AND big_id=?", placeIndex1[1], placeBig.ID).First(&placeSmall)
+		placeSmallIds[0] = placeSmall.ID
+		placeSmallNames[0] = placeSmall.Name
+	}
+	{
+		var placeBig dbModel.PlaceBig
+		var placeSmall dbModel.PlaceSmall
+		db.Where("indexx=? AND campus_id=?", placeIndex2[0], campusId).First(&placeBig)
+		db.Where("indexx=? AND big_id=?", placeIndex2[1], placeBig.ID).First(&placeSmall)
+		placeSmallIds[1] = placeSmall.ID
+		placeSmallNames[1] = placeSmall.Name
+	}
+	{
+		var placeBig dbModel.PlaceBig
+		var placeSmall dbModel.PlaceSmall
+		db.Where("indexx=? AND campus_id=?", placeIndex3[0], campusId).First(&placeBig)
+		db.Where("indexx=? AND big_id=?", placeIndex3[1], placeBig.ID).First(&placeSmall)
+		placeSmallIds[2] = placeSmall.ID
+		placeSmallNames[2] = placeSmall.Name
+	}
 
 
 	//获取用户OpenId
@@ -118,7 +129,7 @@ func AddLost(ctx *gin.Context) {
 
 	//将新的Lost对象添加至数据库中
 	var newLost dbModel.Lost
-	if has2 == true && has3 == true {
+	if ctx.PostForm("place_2") != "" && ctx.PostForm("place_3") != "" {
 		newLost = dbModel.Lost{
 			Validity:      true,
 			IsFoundBySelf: false,
@@ -133,7 +144,7 @@ func AddLost(ctx *gin.Context) {
 			Date:          LostDate,
 			TimeSession:   Time2Session(),
 		}
-	} else if has2 == true && has3 == false {
+	} else if ctx.PostForm("place_2") != "" && ctx.PostForm("place_3") == "" {
 		newLost = dbModel.Lost{
 			Validity:      true,
 			IsFoundBySelf: false,
@@ -147,7 +158,7 @@ func AddLost(ctx *gin.Context) {
 			Date:          LostDate,
 			TimeSession:   Time2Session(),
 		}
-	} else if has2 == false && has3 == false {
+	} else if ctx.PostForm("place_2") == "" && ctx.PostForm("place_3") == "" {
 		newLost = dbModel.Lost{
 			Validity:      true,
 			IsFoundBySelf: false,

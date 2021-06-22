@@ -89,7 +89,7 @@ func main() {
 	//common.ItemTypeInitial()
 	//common.UpdateStudentList()
 	//common.PlaceInitial()
-
+	common.UpdateStudentList()
 	////加载根路由组
 	r := gin.Default()
 	r = CollectRoute(r)

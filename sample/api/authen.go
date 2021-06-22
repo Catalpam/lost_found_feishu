@@ -23,7 +23,7 @@ func main() {
 	//testUserInfo()
 }
 
-func testAccessToken() {
+func AccessToken() {
 	ctx := context.Background()
 	coreCtx := core.WrapContext(ctx)
 	body := &authen.AuthenAccessTokenReqBody{
@@ -67,7 +67,7 @@ func testFlushAccessToken() {
 	fmt.Println(tools.Prettify(result))
 }
 
-func testUserInfo() {
+func UserInfo() {
 	ctx := context.Background()
 	coreCtx := core.WrapContext(ctx)
 	reqCall := authenService.Authens.UserInfo(coreCtx, request.SetUserAccessToken("[user_access_token]"))

@@ -67,6 +67,7 @@ func GetMeInfo(ctx *gin.Context)  {
 			ItemType:  common.TypeId2Name(value.TypeSmallId),
 			Image:     value.Image,
 		}
+		lostCnt ++
 		myLosts = append(myLosts, tempLost)
 	}
 	ctx.JSON(http.StatusOK, gin.H{

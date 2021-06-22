@@ -15,7 +15,7 @@ func MiniAuthMiddleWare() gin.HandlerFunc {
 			ctx.JSON(http.StatusUnauthorized, gin.H{
 				"code": 4003,
 				"data": "",
-				"msg":  "权限不足,还未登录，请调用tt.login登录",
+				"msg":  "权限不足,还未登录",
 			})
 			ctx.Abort()
 			return
@@ -28,7 +28,7 @@ func MiniAuthMiddleWare() gin.HandlerFunc {
 			ctx.JSON(http.StatusUnauthorized, gin.H{
 				"code": 4003,
 				"data": "",
-				"msg":  "权限不足,Cookie不合法，请调用tt.login登录",
+				"msg":  "权限不足,您不是电子科大的成员，正在将您的可用性添加至程序中，请稍等片刻！",
 			})
 			ctx.Abort()
 			return

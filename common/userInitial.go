@@ -27,14 +27,21 @@ func UpdateStudentList() {
 	for _, value := range result.Items {
 		var dbStudent dbModel.User
 		open_id := value.OpenId
+		var id string
+		if len(value.CustomAttrs) != 0 {
+			// id = ""
+			id = value.CustomAttrs[0].Value.Text
+		} else {
+			id = "非电子科大成员，无学号/工号"
+		}
 		DB.Where("open_id = ?", open_id).First(&dbStudent)
 		//更新学生信息：
-		if dbStudent.ID != 0{
+		if dbStudent.ID != 0 {
 			if dbStudent.Name != value.Name {
 				dbStudent.Name = value.Name
 			}
-			if dbStudent.StudentId != value.CustomAttrs[0].Value.Text {
-				dbStudent.StudentId = value.CustomAttrs[0].Value.Text
+			if dbStudent.StudentId != id {
+				dbStudent.StudentId = id
 			}
 			if dbStudent.Mobile != value.Mobile {
 				dbStudent.Mobile = value.Mobile
@@ -50,12 +57,12 @@ func UpdateStudentList() {
 		}
 		//创建新学生
 		newStudent := dbModel.User{
-			Name: value.Name,
-			StudentId: value.CustomAttrs[0].Value.Text,
-			OpenId: value.OpenId,
-			Mobile: value.Mobile,
+			Name:         value.Name,
+			StudentId:    id,
+			OpenId:       value.OpenId,
+			Mobile:       value.Mobile,
 			DepartmentId: value.DepartmentIds[0],
-			Avatar: value.Avatar.AvatarOrigin,
+			Avatar:       value.Avatar.AvatarOrigin,
 		}
 		DB.Create(&newStudent)
 	}
